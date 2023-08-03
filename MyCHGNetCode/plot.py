@@ -75,6 +75,6 @@ def enthalpy_temperature_plot():
 
 # temperature_potential_plot()
 # time_density_plot()
-enthalpy_temperature_plot()
-# temperature_density_plot()
+# enthalpy_temperature_plot()
+temperature_density_plot()
 # time_temperature_plot()

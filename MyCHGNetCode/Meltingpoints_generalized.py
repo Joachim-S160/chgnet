@@ -31,7 +31,7 @@ def Biggest_box(structure):
     return [a, b, c]
 
 
-def Melting_point_simulation(molecule_name, cif_file, Tstart=300):
+def Melting_point_simulation(molecule_name, cif_file, Tstart=300, Tend=2000, GPU="cuda:2"):
 
     # load structure
     structure = Structure.from_file(cif_file)
@@ -56,7 +56,7 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=300):
         trajectory="mdNVT_out_" + molecule_name + ".traj",
         logfile="mdNVT_out_" + molecule_name + ".log",
         loginterval=100,
-        use_device="cuda",  # use 'cuda' for faster MD
+        use_device=GPU,  # use 'cuda' for faster MD
     )
 
     md1.run(500*10)  # run a 10 ps MD simulation
@@ -71,7 +71,7 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=300):
         trajectory="mdNPT1_out_" + molecule_name + ".traj",
         logfile="mdNPT1_out_" + molecule_name + ".log",
         loginterval=100,
-        use_device="cuda",  # use 'cuda' for faster MD
+        use_device=GPU,  # use 'cuda' for faster MD
         taut=0.5*100*1000  # in fs
     )
 
@@ -93,7 +93,7 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=300):
         trajectory="mdNPT2_out_" + molecule_name + ".traj",
         logfile="mdNPT2_out_" + molecule_name + ".log",
         loginterval=100,
-        use_device="cuda:2",  # use 'cuda:2' for faster MD
+        use_device=GPU,  # use 'cuda:2' for faster MD
         taut=0.5*100*1000  # in fs
     )
     md3.run(1*500*1000)  # run a 1 ns MD simulation

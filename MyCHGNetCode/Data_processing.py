@@ -14,22 +14,6 @@ Temperature = np.array([atoms.get_temperature() for atoms in traj])
 # NPT simulation so pressure is constant
 Enthalpy = Epot + Volume
 
-# test out raw data
-plt.plot(Temperature, Enthalpy, 'ro')
-plt.show()
-
-def plot_density2(txtfile):
-    #  10 different colors
-    data = np.loadtxt(txtfile, skiprows=1)
-
-    time = data[:, 0]
-    density = data[:, 1]
-
-    plt.plot(time, density, color='g', label=f'density at 1200 K')
-    plt.legend(loc='best')
-    plt.xlabel('time [femtoseconds = 10^-15 s]]')
-    plt.ylabel('density [g/cm^3]')
-    plt.show()
 
 ################################### HEATING ######################################################################################
 
@@ -39,31 +23,12 @@ def normalize(x):
 
 # Make enthalpy temperature plot
 
-
-def plot_HT(txtfile, label, color):
-    data = np.loadtxt(txtfile, skiprows=1)
-    temperature = data[:, 0]
-    enthalpy = normalize(data[:, 1])
-    plt.plot(temperature, enthalpy, color, label=label)
+def plot_HT(T, H, label, color):
+    plt.plot(T, normalize(H), color, label=label)
     plt.xlabel('temperature [K]')
     plt.ylabel('Normalized enthalpy [constant * keV]')
-    plt.title('Enthalpy of Al at different temperatures, with the Al_mm potential and presimulation: NVT thermalisation')
-
-
-def plot_HT2(T, H, label, color):
-
-    temperature = T
-    enthalpy = normalize(H)
-    plt.plot(temperature, enthalpy, color, label=label)
-    plt.xlabel('temperature [K]')
-    plt.ylabel('Normalized enthalpy [constant * keV]')
-    plt.title('Enthalpy Al, Al_mm potential, with NVT thermalisation')
-
-
-# plot_HT('HT_data_444.txt', 'Al 4x4x4', 'ro')
-# plot_HT('HT_data_777.txt', 'Al 7x7x7', 'go')
-# plot_HT('HT_data_101010.txt', 'Al 10x10x10', 'bo')
-
+    
+# plot_HT(Temperature, Enthalpy, 'HfF4', 'ro')
 # plt.legend()
 # plt.show()
 
@@ -80,16 +45,15 @@ def averaging_system(x, y):
         AV[index] = np.average(temporary)
     return x_uniques, AV
 
-# Average out enthalpy every 1K
-
-
-def averaged_enthalpy(txtfile, averagingfactor=1):
-    data = np.loadtxt(txtfile, skiprows=1)
-    temperature = data[:, 0]/averagingfactor
-    enthalpy = data[:, 1]
+# Average out enthalpy every 1K or more
+def averaged_enthalpy(T, H, averagingfactor=1):
+    temperature = T/averagingfactor
+    enthalpy = H
     x, y = averaging_system(temperature, enthalpy)
     return x*averagingfactor, y
 
+# plt.plot(*averaged_enthalpy(Temperature, Enthalpy, 10), 'ro')
+# plt.show()
 
 # plot the derivative of the enthalpy
 def plot_dHdT(T, H, label, color):
@@ -99,8 +63,9 @@ def plot_dHdT(T, H, label, color):
     plt.plot(temperature, dHdT, color, label=label)
     plt.xlabel('temperature [K]')
     plt.ylabel('dH/dT [keV/K]')
-    plt.title('Derivative of the enthalpy of Al at different temperatures, with the Al_mm potential and presimulation: NVT thermalisation')
 
+# plot_dHdT(*averaged_enthalpy(Temperature, Enthalpy, 10), 'Al', 'ro')
+# plt.show()
 
 def determine_melting_point_and_error(T: np.array, H: np.array, stdv_param: float = 3, start_outlier: int = 1, end_outlier: int = 1):
     # take the derivative of the enthalpy
@@ -150,7 +115,6 @@ def determine_melting_point_and_error(T: np.array, H: np.array, stdv_param: floa
 
 
 def results(T, H, stdv_param=3, start_outlier=1, end_outlier=1):
-    plot_HT2(T, H, 'Processed data 4x4x4', 'bo')
     MP, ER = determine_melting_point_and_error(
         T, H, stdv_param, start_outlier, end_outlier)
     plt.errorbar(MP, 0.5, xerr=ER, fmt='o', color='black', label='Melting point: ' +
@@ -204,17 +168,17 @@ def gradient(T, H):
 # PPT plot:
 
 
-def filter_vs_no_filter():
-    T, H = averaged_enthalpy('HT_data_101010.txt', 10)
-    plt.plot(*gradient(T, H), 'yo', label='Unfiltered data')
+def filter_vs_no_filter(T,H):
+    T_, H_ = averaged_enthalpy(T,H, 10)
+    plt.plot(*gradient(T_, H_), 'yo', label='Unfiltered data')
     plt.plot(*gradient(*Savitzky_Golay_filter2(*
-             Savitzky_Golay_filter2(T, H))), 'bo', label='Filtered data')
+             Savitzky_Golay_filter2(T_, H_))), 'bo', label='Filtered data')
     plt.legend()
     plt.xlabel('temperature [K]')
     plt.ylabel('dH/dT [keV/K]')
-    plt.show()
     plt.title('Enthalpy gradient filter comparison')
-# filter_vs_no_filter()
+    plt.show()
+# filter_vs_no_filter(Temperature, Enthalpy)
 
 
 ################################################ FINAL RESULTS #####################################################################
@@ -223,56 +187,31 @@ def Normalize(T, H):
     return T, normalize(H)
 
 
-def final_results1(txtfile, title):
+def final_results1(T,H, title):
     # Average data
-    Tav, Hav = averaged_enthalpy(txtfile, 10)
+    Tav, Hav = averaged_enthalpy(T,H, 10)
     # Filter data
-    T, H = Savitzky_Golay_filter2(
+    T_, H_ = Savitzky_Golay_filter2(
         *Savitzky_Golay_filter2(Tav, Hav))
     # Uncomment for gradient
     # plt.plot(*Normalize(*gradient(T, H)), 'ro', label='gradient')
 
     # Plot processed data
-    plt.plot(T, normalize(H), 'bo', label='Processed data' +
+    plt.plot(T_, normalize(H_), 'bo', label='Processed data' +
              ' (' + str(title) + ')')
-    MP, ER = determine_melting_point_and_error(T, H)
+    MP, ER = determine_melting_point_and_error(T_, H_)
     # Plot melting point and error in the middle of the plot
     plt.errorbar(MP, 0.5, xerr=ER, fmt='o', color='black', label='Melting point: ' +
                  str(round(MP, 2)) + ' +/- ' + str(round(ER, 2)) + ' K' ' (' + str(title) + ')')
-    # Plot experimental melting point
-    # plt.axvline(x=933, color='black', linestyle='--', label='Experimental melting point of Al')
-    # plt.title(title)
-    # plt.xlabel('temperature [K]')
-    # plt.ylabel('Normalized enthalpy')
-    # plt.legend()
-
-
-def final_results2(txtfile, title):
-    # Average data
-    Tav, Hav = averaged_enthalpy(txtfile, 10)
-    # Filter data
-    T, H = Savitzky_Golay_filter2(
-        *Savitzky_Golay_filter2(Tav, Hav))
-    # Uncomment for gradient
-    # plt.plot(*Normalize(*gradient(T, H)), 'ro', label='gradient')
-
-    # Plot processed data
-    plt.plot(T, normalize(H), 'ro', label='Processed data' +
-             ' (' + str(title) + ')')
-    MP, ER = determine_melting_point_and_error(T, H)
-    # Plot melting point and error in the middle of the plot
-    plt.errorbar(MP, 0.6, xerr=ER, fmt='o', color='green', label='Melting point: ' +
-                 str(round(MP, 2)) + ' +/- ' + str(round(ER, 2)) + ' K' ' (' + str(title) + ')')
-    # plt.title(title)
+    plt.title(title)
     plt.xlabel('temperature [K]')
     plt.ylabel('Normalized enthalpy')
     # plt.legend()
 
-# Plot experimental melting point
+
 
 def nice_plot():
-    final_results1('HT_data_101010.txt', '10x10x10')
-    final_results2('HT_data_777.txt', '7x7x7')
+    final_results1(Temperature, Enthalpy,'Al')
     plt.axvline(x=933, color='black', linestyle='--',
                 label='Experimental melting point: 933K')
     plt.legend()
@@ -281,3 +220,5 @@ def nice_plot():
 def linear_regression(x, y):
     a, b = np.polyfit(x, y, deg=1)
     return a, b
+
+nice_plot()
