@@ -99,4 +99,4 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=300):
     md3.run(1*500*1000)  # run a 1 ns MD simulation
     print('md3 works, simulation finished')
 
-Melting_point_simulation('HfF4', 'cif_files/HfF4_mp-31033_computed.cif')
+Melting_point_simulation('HfF4', 'chgnet/MyCHGNetCode_outdated/cif_files/HfF4_mp-31033_computed.cif')
