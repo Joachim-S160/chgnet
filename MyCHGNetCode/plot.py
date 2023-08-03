@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from ase.io.trajectory import Trajectory
 
-traj = Trajectory("mdNVT_out.traj")[:]
+traj = Trajectory("chgnet/MyCHGNetCode/mdNPT3_out.traj")[:]
 
 stress = np.array([atoms.get_stress() for atoms in traj])
 pressure = 1/3*(stress[:,0] + stress[:,1] + stress[:,2])
@@ -75,7 +75,6 @@ def enthalpy_temperature_plot():
 
 # temperature_potential_plot()
 # time_density_plot()
-# enthalpy_temperature_plot()
+enthalpy_temperature_plot()
 # temperature_density_plot()
 # time_temperature_plot()
-print((500/30)**(1/3))
