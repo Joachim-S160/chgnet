@@ -1,3 +1,11 @@
+"""
+
+Description:
+Get data from trajectory files
+and return physical properties
+
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 from ase.io.trajectory import Trajectory

@@ -6,13 +6,14 @@ from scipy.interpolate import make_interp_spline
 from ase.io.trajectory import Trajectory
 from plot import get_THtrp
 
-THtrp = get_THtrp("chgnet/MyCHGNetCode/mdNPT3_out.traj")
+THtrp = get_THtrp(["chgnet/MyCHGNetCode/mdNPT3_out_Al.traj"])
 
 Temperature = THtrp[0, 0, :]
 
 # NPT simulation so pressure is constant
 Enthalpy = THtrp[0, 1, :]
 
+plot_everything = True
 
 ################################### HEATING ######################################################################################
 
@@ -26,10 +27,11 @@ def plot_HT(T, H, label, color):
     plt.plot(T, normalize(H), color, label=label)
     plt.xlabel('temperature [K]')
     plt.ylabel('Normalized enthalpy [constant * keV]')
-    
-# plot_HT(Temperature, Enthalpy, 'HfF4', 'ro')
-# plt.legend()
-# plt.show()
+
+if plot_everything:  
+    plot_HT(Temperature, Enthalpy, 'Al', 'ro')
+    plt.legend()
+    plt.show()
 
 # Average based on decimal cut-off
 def averaging_system(x, y):
@@ -51,8 +53,10 @@ def averaged_enthalpy(T, H, averagingfactor=1):
     x, y = averaging_system(temperature, enthalpy)
     return x*averagingfactor, y
 
-# plt.plot(*averaged_enthalpy(Temperature, Enthalpy, 10), 'ro')
-# plt.show()
+
+if plot_everything:  
+    plt.plot(*averaged_enthalpy(Temperature, Enthalpy, 10), 'ro')
+    plt.show()
 
 # plot the derivative of the enthalpy
 def plot_dHdT(T, H, label, color):
@@ -63,8 +67,10 @@ def plot_dHdT(T, H, label, color):
     plt.xlabel('temperature [K]')
     plt.ylabel('dH/dT [keV/K]')
 
-# plot_dHdT(*averaged_enthalpy(Temperature, Enthalpy, 10), 'Al', 'ro')
-# plt.show()
+
+if plot_everything:  
+    plot_dHdT(*averaged_enthalpy(Temperature, Enthalpy, 10), 'Al', 'ro')
+    plt.show()
 
 def determine_melting_point_and_error(T: np.array, H: np.array, stdv_param: float = 3, start_outlier: int = 1, end_outlier: int = 1):
     # take the derivative of the enthalpy
@@ -122,14 +128,6 @@ def results(T, H, stdv_param=3, start_outlier=1, end_outlier=1):
     # print the melting point and error in the legend
     # plt.legend(['Al 10x10x10', 'Melting point: ' + str(round(MP, 2)) + ' +/- ' + str(round(ER, 2)) + ' K'])
 
-# # plot_dHdT(*averaged_enthalpy('HT_data_101010.txt', 20), 'Al 10x10x10', 'mo')
-# plot_HT2(*averaged_enthalpy('HT_data_101010.txt',20), 'Al 10x10x10', 'bo')
-# MP, ER = determine_melting_point_and_error(
-#     *averaged_enthalpy('HT_data_101010.txt', 20), stdv_param=3, start_outlier=2, end_outlier=2)
-
-
-# results(*averaged_enthalpy(txtfile='HT_data_101010.txt', averagingfactor=20), 3, 2, 2)
-# plt.show()
 
 ########################################### HEATING WITH SMOOTHING: Savitzky-Golay filter   ###################################################################
 
@@ -177,7 +175,10 @@ def filter_vs_no_filter(T,H):
     plt.ylabel('dH/dT [keV/K]')
     plt.title('Enthalpy gradient filter comparison')
     plt.show()
-# filter_vs_no_filter(Temperature, Enthalpy)
+    
+
+if plot_everything:  
+    filter_vs_no_filter(Temperature, Enthalpy)
 
 
 ################################################ FINAL RESULTS #####################################################################
@@ -198,10 +199,10 @@ def final_results1(T,H, title):
     # Plot processed data
     plt.plot(T_, normalize(H_), 'bo', label='Processed data' +
              ' (' + str(title) + ')')
-    MP, ER = determine_melting_point_and_error(T_, H_)
+    MP, ER = determine_melting_point_and_error(T_, H_,2)
     # Plot melting point and error in the middle of the plot
     plt.errorbar(MP, 0.5, xerr=ER, fmt='o', color='black', label='Melting point: ' +
-                 str(round(MP, 2)) + ' +/- ' + str(round(ER, 2)) + ' K' ' (' + str(title) + ')')
+                 str(round(MP, 2)) + ' +/- ' + str(round(ER, 1.1)) + ' K' ' (' + str(title) + ')')
     plt.title(title)
     plt.xlabel('temperature [K]')
     plt.ylabel('Normalized enthalpy')
@@ -220,4 +221,6 @@ def linear_regression(x, y):
     a, b = np.polyfit(x, y, deg=1)
     return a, b
 
-nice_plot()
+
+if plot_everything:  
+    nice_plot()

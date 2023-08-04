@@ -1,3 +1,13 @@
+"""
+
+Description:
+Aluminum melting point prediction using CHGNet
+using the heating curve method
+1 NVT run at 400K
+1 NPT heating run to 2000K
+
+"""
+
 from __future__ import annotations
 from chgnet.model import MolecularDynamics
 from chgnet.model import StructOptimizer

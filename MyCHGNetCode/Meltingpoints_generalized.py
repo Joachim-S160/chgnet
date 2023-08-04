@@ -1,3 +1,15 @@
+"""
+
+Description:
+Halide melting point prediction using CHGNet
+using the heating curve method
+1 NVT thermalisation at Tstart
+1 NPT Equilibration at Tstart
+1 NPT heating run to Tend
+no more than 500 atoms in the box
+
+"""
+
 from __future__ import annotations
 from chgnet.model import MolecularDynamics
 from chgnet.model import StructOptimizer
@@ -99,4 +111,5 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=300, Tend=2000, GPU
     md3.run(1*500*1000)  # run a 1 ns MD simulation
     print('md3 works, simulation finished')
 
-Melting_point_simulation('HfF4', 'chgnet/MyCHGNetCode_outdated/cif_files/HfF4_mp-31033_computed.cif')
+Melting_point_simulation('HfF4', 'HfF4.cif', 300, 2000, "cuda:3")
+
