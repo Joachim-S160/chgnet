@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from ase.io.trajectory import Trajectory
 
-traj = Trajectory("chgnet/MyCHGNetCode/mdNPT3_out.traj")[:]
+traj = Trajectory("chgnet/MyCHGNetCode/mdNPT2_out_TiBr4.traj")[:]
 
 stress = np.array([atoms.get_stress() for atoms in traj])
 pressure = 1/3*(stress[:,0] + stress[:,1] + stress[:,2])
@@ -76,5 +76,11 @@ def enthalpy_temperature_plot():
 # temperature_potential_plot()
 # time_density_plot()
 # enthalpy_temperature_plot()
-temperature_density_plot()
+# temperature_density_plot()
 # time_temperature_plot()
+
+def linear_regression(x, y):
+    a, b = np.polyfit(x, y, deg=1)
+    return a, b
+
+print(linear_regression(indices, temperature)[0])
