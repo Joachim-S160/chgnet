@@ -4,15 +4,14 @@ import matplotlib.pyplot as plt
 import heapq
 from scipy.interpolate import make_interp_spline
 from ase.io.trajectory import Trajectory
+from plot import get_THtrp
 
-traj = Trajectory("chgnet/MyCHGNetCode/mdNPT3_out.traj")[:]
+THtrp = get_THtrp("chgnet/MyCHGNetCode/mdNPT3_out.traj")
 
-Volume = np.array([atoms.get_volume() for atoms in traj])
-Epot = np.array([atoms.get_potential_energy() for atoms in traj])
-Temperature = np.array([atoms.get_temperature() for atoms in traj])
+Temperature = THtrp[0, 0, :]
 
 # NPT simulation so pressure is constant
-Enthalpy = Epot + Volume
+Enthalpy = THtrp[0, 1, :]
 
 
 ################################### HEATING ######################################################################################
