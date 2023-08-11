@@ -4,9 +4,11 @@ import matplotlib.pyplot as plt
 import heapq
 from scipy.interpolate import make_interp_spline
 from ase.io.trajectory import Trajectory
-from plot import get_THtrp
+from plot import get_THtrp, get_molecule_name
 
-THtrp = get_THtrp(["chgnet/MyCHGNetCode/mdNPT3_out_Al.traj"])
+
+file = "chgnet/MyCHGNetCode/mdNPT2_out_LiCl.traj"
+THtrp = get_THtrp([file])
 
 Temperature = THtrp[0, 0, :]
 
@@ -14,6 +16,8 @@ Temperature = THtrp[0, 0, :]
 Enthalpy = THtrp[0, 1, :]
 
 plot_everything = True
+molecule_name = get_molecule_name(file)
+experimental_melting_point = 883
 
 ################################### HEATING ######################################################################################
 
@@ -29,7 +33,7 @@ def plot_HT(T, H, label, color):
     plt.ylabel('Normalized enthalpy [constant * keV]')
 
 if plot_everything:  
-    plot_HT(Temperature, Enthalpy, 'Al', 'ro')
+    plot_HT(Temperature, Enthalpy, molecule_name, 'ro')
     plt.legend()
     plt.show()
 
@@ -69,7 +73,7 @@ def plot_dHdT(T, H, label, color):
 
 
 if plot_everything:  
-    plot_dHdT(*averaged_enthalpy(Temperature, Enthalpy, 10), 'Al', 'ro')
+    plot_dHdT(*averaged_enthalpy(Temperature, Enthalpy, 10), molecule_name, 'ro')
     plt.show()
 
 def determine_melting_point_and_error(T: np.array, H: np.array, stdv_param: float = 3, start_outlier: int = 1, end_outlier: int = 1):
@@ -202,7 +206,7 @@ def final_results1(T,H, title):
     MP, ER = determine_melting_point_and_error(T_, H_,2)
     # Plot melting point and error in the middle of the plot
     plt.errorbar(MP, 0.5, xerr=ER, fmt='o', color='black', label='Melting point: ' +
-                 str(round(MP, 2)) + ' +/- ' + str(round(ER, 1.1)) + ' K' ' (' + str(title) + ')')
+                 str(round(MP, 2)) + ' +/- ' + str(round(ER, 2)) + ' K' ' (' + str(title) + ')')
     plt.title(title)
     plt.xlabel('temperature [K]')
     plt.ylabel('Normalized enthalpy')
@@ -211,9 +215,9 @@ def final_results1(T,H, title):
 
 
 def nice_plot():
-    final_results1(Temperature, Enthalpy,'Al')
-    plt.axvline(x=933, color='black', linestyle='--',
-                label='Experimental melting point: 933K')
+    final_results1(Temperature, Enthalpy,molecule_name)
+    plt.axvline(x=experimental_melting_point, color='black', linestyle='--',
+                label='Experimental melting point: ' + str(experimental_melting_point) + ' K')
     plt.legend()
     plt.show()
 
