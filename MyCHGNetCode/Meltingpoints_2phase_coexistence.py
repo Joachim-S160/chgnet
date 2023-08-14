@@ -2,7 +2,7 @@
 
 Description:
 Aluminum melting point prediction using CHGNet
-using the 2 phase coexistence method
+and the 2 phase coexistence method
 
 """
 
@@ -48,15 +48,17 @@ def Biggest_box(structure):
     return [a, b, c]
 
 
-def simulation(molecule_name, cif_file, GPU="cuda:2"):
+def simulation(molecule_name:str="Al", cif_file:str="Al.cif", temperature_fluid:int=2000, GPU="cuda:2"):
     """
 
     input:
         molecule_name: name of the molecule
         cif_file: cif file of the molecule
+        temperature_fluid: temperature of the fluid in K
         GPU: GPU to use
     output:
-        stores trajectory and log file in .traj and .log files
+        stores trajectory and log files in .traj and .log files
+        returns cif files of the solid @ 0K and fluid @ temperature_fluid K, but NOT the combined structure yet
 
     """
 
@@ -83,7 +85,7 @@ def simulation(molecule_name, cif_file, GPU="cuda:2"):
     md1 = MolecularDynamics(atoms=Solid,
                             model=chgnet,
                             ensemble="nvt",
-                            temperature=2000, # in K
+                            temperature=temperature_fluid, # in K
                             timestep=2, # in fs
                             trajectory="mdNVT_out_" + molecule_name + ".traj",
                             logfile="mdNVT_out_" + molecule_name + ".log",
@@ -95,14 +97,10 @@ def simulation(molecule_name, cif_file, GPU="cuda:2"):
     print('finished md1')
     Liquid:structure = md1.atoms
     
-    # create solid liquid interface
-    for site in Solid:
-        Liquid.append(site.specie, site.frac_coords, coords_are_cartesian=False)
-    combined_structure:structure = Liquid
-    atoms = combined_structure.atoms()
-    atoms.write("combined_structure.cif", format='cif')
-    print("combined structure has been made")
-
+    # create cif files of solid and liquid
+    Solid.atoms.to(filename="Solid_" + molecule_name + ".cif")
+    Liquid.to(filename="Liquid_" + molecule_name + ".cif")
+    print("solid and liquid cif files have been made")
 
 
 

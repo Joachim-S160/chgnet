@@ -1,7 +1,7 @@
 """
 
 Desription:
-Transform trajectory data to a small number of cif files, each cif file contains the structure of one of the frames of the trajectory.
+Transform trajectory data (ASE) to a small number of cif files, each cif file contains the structure of one of the frames of the trajectory.
 
 """
 
