@@ -47,24 +47,23 @@ def Biggest_box(structure):
             break
     return [a, b, c]
 
-
-def simulation(molecule_name:str="Al", cif_file:str="Al.cif", temperature_fluid:int=2000, GPU="cuda:2"):
+def simulation(molecule_name:str="Al", cif_file:str="Al.cif", temperature_fluid:int=2000, NVT_runtime:int="1000", GPU="cuda:2"):
     """
 
     input:
         molecule_name: name of the molecule
         cif_file: cif file of the molecule
         temperature_fluid: temperature of the fluid in K
+        NVT_runtime: runtime of the NVT simulation in ps
         GPU: GPU to use
     output:
         stores trajectory and log files in .traj and .log files
-        returns cif files of the solid @ 0K and fluid @ temperature_fluid K, but NOT the combined structure yet
+        stores cif files of the solid @ 0K and fluid @ temperature_fluid K, but NOT the combined structure yet
 
     """
 
     # load structure
-    structure = Structure.from_file(
-        f"chgnet/MyCHGNetCode/cif_files_frames/HfF4/HfF4_frame_6.cif")
+    structure = Structure.from_file(cif_file)
     print(f"structure: {structure}")
 
     # load model
@@ -72,13 +71,21 @@ def simulation(molecule_name:str="Al", cif_file:str="Al.cif", temperature_fluid:
 
     # relax structure at 0K
     relaxer = StructOptimizer()
-    relaxed_structure = relaxer.relax(structure, verbose=True)
+    relaxed_structure_dict:dict = relaxer.relax(structure, verbose=True)
     print(
-        f"\nCHGNet took {len(relaxed_structure['trajectory'])} steps. Relaxed structure:")
-    print(relaxed_structure["final_structure"])
-
+        f"\nCHGNet took {len(relaxed_structure_dict['trajectory'])} steps. Relaxed structure:")
+    print(relaxed_structure_dict["final_structure"])
+    relaxed_structure:Structure = relaxed_structure_dict["final_structure"]
+    
+    # print the type of the relaxed structure
+    print(relaxed_structure.__class__)
+    
+    # Check if relaxed structure is a structure type
+    assert isinstance(relaxed_structure,Structure), "Relaxed structure is not a structure type"
+    
     # create solid supercell
-    Solid:structure = structure.make_supercell(Biggest_box(structure))
+    relaxed_structure.make_supercell(Biggest_box(relaxed_structure))
+    Solid = relaxed_structure
 
     # molecular dynamics simulations
     # melt at 2000K via nvt
@@ -91,16 +98,19 @@ def simulation(molecule_name:str="Al", cif_file:str="Al.cif", temperature_fluid:
                             logfile="mdNVT_out_" + molecule_name + ".log",
                             loginterval=100,
                             use_device=GPU)
-    
+
     print('start md1')
-    md1.run(500*1000)  # run a 1 ns MD simulation to get a liquid structure
+    md1.run(500*NVT_runtime)  # run a 1 ns MD simulation to get a liquid structure
     print('finished md1')
     Liquid:structure = md1.atoms
-    
+
     # create cif files of solid and liquid
     Solid.atoms.to(filename="Solid_" + molecule_name + ".cif")
     Liquid.to(filename="Liquid_" + molecule_name + ".cif")
-    print("solid and liquid cif files have been made")
+    print("Solid and liquid cif files have been made")
 
+simulation(molecule_name="Al", cif_file="Al.cif", temperature_fluid=200, NVT_runtime=1, GPU="cuda:2")
 
-
+# TODO:
+# Test aluminum
+# search for melting in WCl6, by ordering the frames correctly
