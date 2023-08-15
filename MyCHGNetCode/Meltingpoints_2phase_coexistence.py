@@ -12,16 +12,13 @@ from chgnet.model import StructOptimizer
 from pymatgen.core import Structure
 from chgnet.model import CHGNet
 
-# get biggest box with less than 500 atoms
-
-
 def Biggest_box(structure):
     """
 
     input: 
         pymatgen structure
     output: 
-        list of boxdimensions [a, b, c] with total number of atoms > 500
+        list of boxdimensions [a, b, c] with total number of atoms < 500
 
     """
     # Get number of atoms in unitcell
@@ -77,9 +74,6 @@ def simulation(molecule_name:str="Al", cif_file:str="Al.cif", temperature_fluid:
     print(relaxed_structure_dict["final_structure"])
     relaxed_structure:Structure = relaxed_structure_dict["final_structure"]
     
-    # print the type of the relaxed structure
-    print(relaxed_structure.__class__)
-    
     # Check if relaxed structure is a structure type
     assert isinstance(relaxed_structure,Structure), "Relaxed structure is not a structure type"
     
@@ -102,14 +96,14 @@ def simulation(molecule_name:str="Al", cif_file:str="Al.cif", temperature_fluid:
     print('start md1')
     md1.run(500*NVT_runtime)  # run a 1 ns MD simulation to get a liquid structure
     print('finished md1')
-    Liquid:structure = md1.atoms
+    Liquid = md1.atoms #ase.Atoms object
 
     # create cif files of solid and liquid
-    Solid.atoms.to(filename="Solid_" + molecule_name + ".cif")
-    Liquid.to(filename="Liquid_" + molecule_name + ".cif")
+    Solid.to(filename="Solid_" + molecule_name + ".cif") #Solid:Structure, so .to() works and .write() doesn't
+    Liquid.write(filename="Liquid_" + molecule_name + ".cif", format='cif') #Liquid:md.atoms,
     print("Solid and liquid cif files have been made")
 
-simulation(molecule_name="Al", cif_file="Al.cif", temperature_fluid=200, NVT_runtime=1, GPU="cuda:2")
+simulation(molecule_name="Al", cif_file="Al.cif", temperature_fluid=1800, NVT_runtime=1000, GPU="cuda:2")
 
 # TODO:
 # Test aluminum

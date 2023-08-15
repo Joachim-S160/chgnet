@@ -113,3 +113,4 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=300, Tend=2000, GPU
 
 Melting_point_simulation('HfF4', 'HfF4.cif', 300, 2000, "cuda:3")
 
+# Ask Bowen what default pressure is used in the NPT ensemble, show him pressure plot
