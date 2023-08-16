@@ -8,16 +8,19 @@ and return physical properties
 
 import numpy as np
 import matplotlib.pyplot as plt
+from chgnet.model import CHGNet
 from ase.io.trajectory import Trajectory
+from pymatgen.io.ase import AseAtomsAdaptor
 
-
+chgnet = CHGNet.load()
 # normalize function
 def normalize(x):
     return (x-np.min(x))/(np.max(x)-np.min(x))
 
-def get_THtrp(files: list):
+def get_THtrp(files: list, Fixed_pressure:bool=False):
     """
     input = list of trajectory files, 
+            Fixed_pressure = True if pressure is fixed, False if pressure is variable
     output = 3D Matrix: 
     1st dimension is the file, 
     2nd dimension is temperature, enthalpy, time, density, pressure 
@@ -37,9 +40,15 @@ def get_THtrp(files: list):
         # stress tensors = sigma_ij at each frame
         # sigma_ij = sigma_xx, sigma_yy, sigma_zz, sigma_xy, sigma_xz, sigma_yz
         # pressure = - 1/3 * (sigma_xx + sigma_yy + sigma_zz)
-        stresstensors = [atoms.get_stress() for atoms in traj]
+        
+        
+        
+        stresstensors = [chgnet.predict_structure(AseAtomsAdaptor.get_structure(atoms))['s'] for atoms in traj]
         pressure = np.array([-1/3 * (sigma[0] + sigma[1] + sigma[2]) for sigma in stresstensors]) 
-        Enthalpy = normalize(Etot + pressure * Volume)
+        # Make sure the pressure is 1 atm for the enthalpy calculation if need be
+        # 1 atm = 10^-4 * 1/160 eV/A^3
+        _pressure_ = (160)*10**(4)*np.ones_like(pressure) if Fixed_pressure else pressure
+        Enthalpy = normalize(Etot + _pressure_ * Volume)
         mass = traj[0].get_masses().sum()
         print(index, file)
 
@@ -49,7 +58,8 @@ def get_THtrp(files: list):
         THtrfiles[index, 2, :num_timesteps_file] = np.arange(num_timesteps_file) * 0.2
         # Convert density from amu/A^3 to g/cm^3 by multiplying by 1.66054
         THtrfiles[index, 3, :num_timesteps_file] = 1.66054 * mass / Volume
-        THtrfiles[index, 4, :num_timesteps_file] = pressure
+        # Convert pressure from eV/A^3 to GPa by multiplying by 160.21766208
+        THtrfiles[index, 4, :num_timesteps_file] = _pressure_ * 160.21766208
 
     return THtrfiles
 

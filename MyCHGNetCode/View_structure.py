@@ -39,7 +39,7 @@ def traj_to_cif(trajfile:str="chgnet/MyCHGNetCode/mdNPT2_out_HfF4.traj", stor_di
         cif_filename = f'{stor_dir}/{get_molecule_name(trajfile)}_frame_{frame_index_new}.cif'
         atoms.write(cif_filename, format='cif')
     
-def files_to_cif(files: list, stor_dir, number_of_frames: int=1):
+def files_to_cif(files: list, stor_dir: str, number_of_frames: int=1):
     """
     input: 
         list of trajectory files: list of *.traj files
@@ -60,6 +60,7 @@ def files_to_cif(files: list, stor_dir, number_of_frames: int=1):
 
 # test
 # files_to_cif(["chgnet/MyCHGNetCode/mdNPT2_out_HfF4.traj", "chgnet/MyCHGNetCode/mdNPT2_out_LiCl.traj", "chgnet/MyCHGNetCode/mdNPT2_out_TiBr4.traj", "chgnet/MyCHGNetCode/mdNPT2_out_TiI4.traj", "chgnet/MyCHGNetCode/mdNPT2_out_WCl6.traj", "chgnet/MyCHGNetCode/mdNPT3_out_Al.traj" ], 300)
-files_to_cif(['chgnet/MyCHGNetCode/mdNPT1_out_WCl6.traj'], 'chgnet/MyCHGNetCode/cif_files_frames/WCl6_NPT1', 1000)
+# traj_to_cif(trajfile='chgnet/MyCHGNetCode/2PCTrajectories/mdNVT_out_Al.traj', stor_dir='chgnet/MyCHGNetCode/2PC_Cif_Files', list_of_frames=[-1])
+files_to_cif(["chgnet/MyCHGNetCode/2PCTrajectories/mdNVT_out_Al.traj"], "chgnet/MyCHGNetCode/2PC_Cif_Files", 50)
 print("Done!")
     

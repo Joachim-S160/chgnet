@@ -11,6 +11,8 @@ from chgnet.model import MolecularDynamics
 from chgnet.model import StructOptimizer
 from pymatgen.core import Structure
 from chgnet.model import CHGNet
+from ase.io import read, write
+from pymatgen.io.ase import AseAtomsAdaptor
 
 def Biggest_box(structure):
     """
@@ -94,7 +96,7 @@ def simulation(molecule_name:str="Al", cif_file:str="Al.cif", temperature_fluid:
                             use_device=GPU)
 
     print('start md1')
-    md1.run(500*NVT_runtime)  # run a 1 ns MD simulation to get a liquid structure
+    md1.run(500*NVT_runtime)  # run an MD simulation to get a liquid structure (in ps)
     print('finished md1')
     Liquid = md1.atoms #ase.Atoms object
 
@@ -103,8 +105,41 @@ def simulation(molecule_name:str="Al", cif_file:str="Al.cif", temperature_fluid:
     Liquid.write(filename="Liquid_" + molecule_name + ".cif", format='cif') #Liquid:md.atoms,
     print("Solid and liquid cif files have been made")
 
-simulation(molecule_name="Al", cif_file="Al.cif", temperature_fluid=1800, NVT_runtime=1000, GPU="cuda:2")
+def NVE_simulation(input_file: str="final_al.cif", molecule_name: str="Al", runtime: int="1000", GPU="cuda:2"):
+    """
+    Args:
+        input_file: input file of the molecule
+        molecule_name: name of the molecule
+        runtime: runtime of the NVE simulation in ps
+        GPU: GPU to use
+    Returns:
+        None. Stores trajectory and log files in .traj and .log files
+    """
+    
+    # load structure
+    Atoms = read(input_file)
+    structure = AseAtomsAdaptor.get_structure(Atoms)
+    # print(f"structure: {structure}")
 
-# TODO:
-# Test aluminum
-# search for melting in WCl6, by ordering the frames correctly
+    # load model
+    chgnet = CHGNet.load()
+    print('structure and model loaded')
+    
+    md1 = MolecularDynamics(atoms=structure,
+                            model=chgnet,
+                            ensemble="nve",
+                            timestep=2, # in fs
+                            trajectory="mdNVE_out_" + molecule_name + ".traj",
+                            logfile="mdNVE_out_" + molecule_name + ".log",
+                            loginterval=100,
+                            use_device=GPU)
+
+    print('start md1')
+    md1.run(500*runtime)  # run an MD simulation to get a liquid structure (in ps)
+    print('finished md1')
+    
+
+
+# simulation(molecule_name="Al", cif_file="Al.cif", temperature_fluid=1800, NVT_runtime=1000, GPU="cuda:2")
+NVE_simulation(molecule_name="Al_combined", input_file="Al_final.cfg", runtime=0.1, GPU="cuda:2")
+
