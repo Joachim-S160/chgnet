@@ -4,16 +4,17 @@ import matplotlib.pyplot as plt
 import heapq
 from scipy.interpolate import make_interp_spline
 from ase.io.trajectory import Trajectory
-from plot import get_THtrp, get_molecule_name
+from plot import get_molecule_name
+from get_Data import get_temperature, get_enthalpy
 
 
-file = "chgnet/MyCHGNetCode/mdNPT2_out_LiCl.traj"
-THtrp = get_THtrp([file])
 
-Temperature = THtrp[0, 0, :]
+file = "chgnet/MyCHGNetCode/data_out/mdNPT2_out_HfF4.traj"
 
-# NPT simulation so pressure is constant
-Enthalpy = THtrp[0, 1, :]
+Temperature = get_temperature(file)  
+
+# NPT simulation so pressure is constant by default in enthalpy calculation
+Enthalpy = get_enthalpy(file)
 
 plot_everything = True
 molecule_name = get_molecule_name(file)
