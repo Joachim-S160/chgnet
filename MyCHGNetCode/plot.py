@@ -27,7 +27,7 @@ def get_molecule_name(file:str):
     dot_index = input_string.find('.')
 
     # Extract the substring between the last slash and the first dot (exclusive)
-    desired_substring = input_string[last_slash_index + 12:dot_index]
+    desired_substring = input_string[last_slash_index + 11:dot_index]
 
     return desired_substring
 
@@ -70,14 +70,15 @@ def time_density_plot(files: list):
     plt.legend()
     plt.show()
     
-def temperature_enthalpy_plot(files: list):
+def temperature_enthalpy_plot(files: list, FP:bool=True):
     """
     Args: list of trajectory files
+            FP: Fixed pressure; if True, pressure is fixed at 1 atm
     returns: plot of temperature vs enthalpy    
     """
     # use different colors for different files
     colors = ['ro', 'bo', 'go', 'yo', 'mo', 'co', 'ko', 'wo']
-    THtr = get_THtrp(files)
+    THtr = get_THtrp(files, Fixed_pressure=FP)
     for index in range(len(files)):
         temperature = THtr[index, 0]
         enthalpy = THtr[index, 1]
@@ -122,7 +123,7 @@ def time_pressure_plot(files: list):
         
         plt.plot(time, pressure/1000, colors[index], label= get_molecule_name(files[index]))
         plt.xlabel('time (ps)')
-        plt.ylabel('pressure (MPa = 9.86 atm)')
+        plt.ylabel('pressure (atm)')
         # print(f"Linear regression for {files[index]} = {linear_regression(time, pressure)} in GPa/ps")
     plt.legend()
     plt.show()
@@ -174,8 +175,8 @@ def linear_fit(x, y):
 # temperature_enthalpy_plot(['chgnet/MyCHGNetCode/mdNPT3_out_Al.traj'])
 
 
-# time_pressure_plot(['chgnet/MyCHGNetCode/mdNPT2_out_WCl6.traj'])
-# temperature_enthalpy_plot(['chgnet/MyCHGNetCode/mdNPT2_out_LiCl.traj'])
+time_pressure_plot(['chgnet/MyCHGNetCode/mdNPT2_out_WCl6.traj'])
+# temperature_enthalpy_plot(['chgnet/MyCHGNetCode/mdNPT2_out_WCl6.traj'])
 # temperature_enthalpy_plot(['chgnet/MyCHGNetCode/mdNPT2_out_HfF4.traj','chgnet/MyCHGNetCode/mdNPT2_out_LiCl.traj','chgnet/MyCHGNetCode/mdNPT2_out_TiBr4.traj','chgnet/MyCHGNetCode/mdNPT2_out_WCl6.traj','chgnet/MyCHGNetCode/mdNPT2_out_TiI4.traj'])
 # time_temperature_plot(['chgnet/MyCHGNetCode/mdNPT2_out_TiBr4.traj','chgnet/MyCHGNetCode/mdNPT2_out_WCl6.traj','chgnet/MyCHGNetCode/mdNPT2_out_TiI4.traj'])
 # time_temperature_plot(['chgnet/MyCHGNetCode/mdNPT2_out_LiCl.traj','chgnet/MyCHGNetCode/mdNPT2_out_HfF4.traj'])
@@ -192,4 +193,4 @@ def loopdyloop(listoffiles):
         temperature_density_plot([file])
         temperature_enthalpy_plot([file])
         
-loopdyloop(['chgnet/MyCHGNetCode/mdNPT2_out_HfF4.traj','chgnet/MyCHGNetCode/mdNPT2_out_LiCl.traj','chgnet/MyCHGNetCode/mdNPT2_out_TiBr4.traj','chgnet/MyCHGNetCode/mdNPT2_out_WCl6.traj','chgnet/MyCHGNetCode/mdNPT2_out_TiI4.traj'])
+# loopdyloop(['chgnet/MyCHGNetCode/mdNPT2_out_HfF4.traj','chgnet/MyCHGNetCode/mdNPT2_out_LiCl.traj','chgnet/MyCHGNetCode/mdNPT2_out_TiBr4.traj','chgnet/MyCHGNetCode/mdNPT2_out_WCl6.traj','chgnet/MyCHGNetCode/mdNPT2_out_TiI4.traj'])
