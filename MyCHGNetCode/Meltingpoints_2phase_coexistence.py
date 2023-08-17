@@ -3,6 +3,7 @@
 Description:
 Aluminum melting point prediction using CHGNet
 and the 2 phase coexistence method
+WATCH OUT WITHOUT RELAXING THE STRUCTURE FIRST THE MD CAN EXPLODE
 
 """
 
@@ -68,7 +69,7 @@ def simulation(molecule_name:str="Al", cif_file:str="Al.cif", temperature_fluid:
     # load model
     chgnet = CHGNet.load()
 
-    # relax structure at 0K
+    # Relax the structure so that the atoms are moved to positions with lower potential energy and the cell size is adjusted to the optimal size with no stresses.
     relaxer = StructOptimizer()
     relaxed_structure_dict:dict = relaxer.relax(structure, verbose=True)
     print(

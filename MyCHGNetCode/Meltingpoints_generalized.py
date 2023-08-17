@@ -7,6 +7,7 @@ using the heating curve method
 1 NPT Equilibration at Tstart
 1 NPT heating run to Tend
 no more than 500 atoms in the box
+WATCH OUT WITHOUT RELAXING THE STRUCTURE FIRST THE MD CAN EXPLODE
 
 """
 
@@ -48,9 +49,20 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=300, Tend=2000, GPU
     # load structure
     structure = Structure.from_file(cif_file)
     print(f"structure: {structure}")
-
+    
     # load model
     chgnet = CHGNet.load()
+
+    # Relax the structure so that the atoms are moved to positions with lower potential energy and the cell size is adjusted to the optimal size with no stresses.
+    relaxer = StructOptimizer()
+    relaxed_structure_dict:dict = relaxer.relax(structure, verbose=True)
+    print(
+        f"\nCHGNet took {len(relaxed_structure_dict['trajectory'])} steps. Relaxed structure:")
+    print(relaxed_structure_dict["final_structure"])
+    relaxed_structure:Structure = relaxed_structure_dict["final_structure"]
+    
+    # Check if relaxed structure is a structure type
+    assert isinstance(relaxed_structure,Structure), "Relaxed structure is not a structure type"
 
     # Molecular dynamics simulations
 
@@ -60,7 +72,7 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=300, Tend=2000, GPU
     print('Presimulation code works, start md1')
     # eq at 400K via nvt
     md1 = MolecularDynamics(
-        atoms=structure,
+        atoms=result["final_structure"],
         model=chgnet,
         ensemble="nvt",
         temperature=Tstart,  # in K

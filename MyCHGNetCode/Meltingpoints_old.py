@@ -5,6 +5,7 @@ Aluminum melting point prediction using CHGNet
 using the heating curve method
 1 NVT run at 400K
 1 NPT heating run to 2000K
+WATCH OUT WITHOUT RELAXING THE STRUCTURE FIRST THE MD CAN EXPLODE
 
 """
 

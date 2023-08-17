@@ -45,7 +45,10 @@ def Biggest_box(structure):
             break
     return [a, b, c]
 
-
+# first relax the structure
+# NVT for 20 ps
+# than NPT for 100 ps
+# only for 100 K
 def Melting_point_simulation(molecule_name, cif_file, Tstart=100, Tend=1000, GPU="cuda:2"):
     """
     Args:   molecule_name: name of the molecule
@@ -62,6 +65,17 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=100, Tend=1000, GPU
 
     # load model
     chgnet = CHGNet.load()
+
+    # Relax the structure so that the atoms are moved to positions with lower potential energy and the cell size is adjusted to the optimal size with no stresses.
+    relaxer = StructOptimizer()
+    relaxed_structure_dict:dict = relaxer.relax(structure, verbose=True)
+    print(
+        f"\nCHGNet took {len(relaxed_structure_dict['trajectory'])} steps. Relaxed structure:")
+    print(relaxed_structure_dict["final_structure"])
+    relaxed_structure:Structure = relaxed_structure_dict["final_structure"]
+    
+    # Check if relaxed structure is a structure type
+    assert isinstance(relaxed_structure,Structure), "Relaxed structure is not a structure type"
 
     # Molecular dynamics simulations
 
