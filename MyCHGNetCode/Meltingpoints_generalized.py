@@ -100,7 +100,7 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=300, Tend=2000, GPU
         model=chgnet,
         ensemble="npt",
         # compressibility_au=2.1,
-        temperature=2000,  # in K
+        temperature=Tend,  # in K
         timestep=2,  # in fs
         trajectory="mdNPT2_out_" + molecule_name + ".traj",
         logfile="mdNPT2_out_" + molecule_name + ".log",
@@ -111,6 +111,6 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=300, Tend=2000, GPU
     md3.run(1*500*1000)  # run a 1 ns MD simulation
     print('md3 works, simulation finished')
 
-Melting_point_simulation('HfF4', 'HfF4.cif', 300, 2000, "cuda:3")
+Melting_point_simulation('TbCl3', 'TbCl3.cif', 300, 1500, "cuda:3")
 
 # Ask Bowen what default pressure is used in the NPT ensemble, show him pressure plot

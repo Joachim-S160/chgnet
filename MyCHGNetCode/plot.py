@@ -122,6 +122,11 @@ def time_kinetic_energy_and_potential_energy_plot(files: list):
     plt.legend()
     plt.show()
 
+def time_total_energy(files:list) -> None:
+    """
+    Args: list of trajectory files
+    """
+
 def linear_regression(x, y):
     """
     Args: x and y values
@@ -131,7 +136,7 @@ def linear_regression(x, y):
     return a, b
 
 # density temperature discrete points diff md's, equilibrating each for 50 ps, WCl6, default taut, 100K steps around melting point, 6 points
-
+time_temperature_plot(["chgnet/MyCHGNetCode/data_out/mdNPT2_out_HfF4.traj"])
 # time_kinetic_energy_and_potential_energy_plot(['chgnet/MyCHGNetCode/mdNPT2_out_HfF4.traj','chgnet/MyCHGNetCode/mdNPT2_out_LiCl.traj','chgnet/MyCHGNetCode/mdNPT2_out_TiBr4.traj','chgnet/MyCHGNetCode/mdNPT2_out_WCl6.traj','chgnet/MyCHGNetCode/mdNPT2_out_TiI4.traj'])
 # temperature_enthalpy_plot(['chgnet/MyCHGNetCode/mdNPT3_out_Al.traj'])
 
