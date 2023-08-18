@@ -109,3 +109,13 @@ def get_potential_energy(file: str):
     """
     return np.array([atoms.get_potential_energy() for atoms in Trajectory(file)[:]])
 
+def time_averaging(quantity: np.ndarray, window_factor: float = 0.5):
+    """
+    Args:   
+            1D array of quantity to be averaged
+            window_factor = factor to determine the size of the window
+    returns:
+            averaged quantity 
+    """
+    assert window_factor <= 1, "window_factor must be less than 1"
+    return np.average(quantity[int(np.round(len(quantity)*window_factor)):])

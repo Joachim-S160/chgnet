@@ -84,7 +84,7 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=100, Tend=1000, GPU
     # Molecular dynamics simulations
 
     # Make a axbxc supercell structure which is a*b*c copies of the original structure (noau atoms) = a*b*c*noau atoms
-    structure.make_supercell(Biggest_box(structure))
+    relaxed_structure.make_supercell(Biggest_box(relaxed_structure))
 
     print('Presimulation code works, start md1')
     for temp in range(Tstart, Tend, 100):
@@ -119,4 +119,4 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=100, Tend=1000, GPU
         print('md ' + str(temp) + ' done')
 
 
-Melting_point_simulation("Al", "Al.cif", Tstart=100, Tend=1200, GPU="cuda:2")
+Melting_point_simulation("Al", "Al.cif", Tstart=400, Tend=1400, GPU="cuda:2")
