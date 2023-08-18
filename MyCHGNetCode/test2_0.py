@@ -35,4 +35,38 @@
 # structure1_with_vacuum.to(filename="solid_fluid_interface3.cif")
 # print("Combined structure has been made")
 
+def Biggest_elongated_box(structure, a=5, b=1, c=1, x_factor=5):
+    """
+    Args:   
+        structure: pymatgen structure 
+        a,b,c: initial box dimensions or lattice parameters,
+        x_factor: ratio between a and max(b,c) with a,b,c the lattice parameters
+    Returns: 
+        dimensions of the biggest possible supercell box  
+    
+    Note this function prefers the stretching of the box in the x direction  
+    """
+    # Get number of atoms in unitcell
+    noau = structure.num_sites
+    print(noau)
 
+    noa = a * b * c * noau
+    # Update boxdimensions until noa is bigger than 500 or the boxdimensions are the same as before
+    while noa < 500:
+        x, y, z = a, b, c
+        if (a + 1) * b * c * noau < 500 and (a + 1) >= x_factor * max(b, c):
+            a += 1
+
+        if a * (b + 1) * c * noau < 500 and a >= x_factor * max(b + 1, c):
+            b += 1
+
+        if a * b * (c + 1) * noau < 500 and a >= x_factor * max(b, c + 1):
+            c += 1
+        if [x, y, z] == [a, b, c]:
+            break
+        noa = a * b * c * noau
+    print("Total number of atoms in the box: ", a*b*c*noau)
+    print("Box dimensions: ", a, b, c)
+    return [a, b, c]
+
+print(Biggest_elongated_box(9))

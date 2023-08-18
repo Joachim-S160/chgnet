@@ -43,6 +43,7 @@ def Biggest_box(structure):
             c += 1
         if [x, y, z] == [a, b, c]:
             break
+    print("Total number of atoms in the box: ", a*b*c*noau)
     return [a, b, c]
 
 # first relax the structure
