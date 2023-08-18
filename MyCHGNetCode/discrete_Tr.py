@@ -49,6 +49,8 @@ def Biggest_box(structure):
 # NVT for 20 ps
 # than NPT for 100 ps
 # only for 100 K
+
+
 def Melting_point_simulation(molecule_name, cif_file, Tstart=100, Tend=1000, GPU="cuda:2"):
     """
     Args:   molecule_name: name of the molecule
@@ -68,14 +70,15 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=100, Tend=1000, GPU
 
     # Relax the structure so that the atoms are moved to positions with lower potential energy and the cell size is adjusted to the optimal size with no stresses.
     relaxer = StructOptimizer()
-    relaxed_structure_dict:dict = relaxer.relax(structure, verbose=True)
+    relaxed_structure_dict: dict = relaxer.relax(structure, verbose=True)
     print(
         f"\nCHGNet took {len(relaxed_structure_dict['trajectory'])} steps. Relaxed structure:")
     print(relaxed_structure_dict["final_structure"])
-    relaxed_structure:Structure = relaxed_structure_dict["final_structure"]
-    
+    relaxed_structure: Structure = relaxed_structure_dict["final_structure"]
+
     # Check if relaxed structure is a structure type
-    assert isinstance(relaxed_structure,Structure), "Relaxed structure is not a structure type"
+    assert isinstance(relaxed_structure,
+                      Structure), "Relaxed structure is not a structure type"
 
     # Molecular dynamics simulations
 
@@ -86,7 +89,21 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=100, Tend=1000, GPU
     for temp in range(Tstart, Tend, 100):
         print(temp)
         md1 = MolecularDynamics(
-            atoms=structure,
+            atoms=relaxed_structure,
+            model=chgnet,
+            ensemble="nvt",
+            temperature=temp,  # in K
+            timestep=2,  # in fs, taut=500*1000000
+            trajectory="mdNVT_out_" + molecule_name + \
+            "_" + str(temp) + ".traj",
+            logfile="mdNVT_out_" + molecule_name + "_" + str(temp) + ".log",
+            loginterval=100,
+            use_device=GPU,  # use 'cuda' for faster MD
+        )
+        md1.run(500*20)  # run 20 ps
+
+        md2 = MolecularDynamics(
+            atoms=md1.atoms,
             model=chgnet,
             ensemble="npt",
             temperature=temp,  # in K
@@ -97,7 +114,8 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=100, Tend=1000, GPU
             loginterval=100,
             use_device=GPU,  # use 'cuda' for faster MD
         )
-        md1.run(500*40)  # run 40 ps
+        md2.run(500*100)  # run 100 ps
         print('md ' + str(temp) + ' done')
 
-Melting_point_simulation("WCl6", "WCl6.cif", Tstart=100, Tend=1000, GPU="cuda:2")
+
+Melting_point_simulation("Al", "Al.cif", Tstart=100, Tend=1200, GPU="cuda:2")

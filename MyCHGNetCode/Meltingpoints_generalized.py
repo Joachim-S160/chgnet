@@ -72,7 +72,7 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=300, Tend=2000, GPU
     print('Presimulation code works, start md1')
     # eq at 400K via nvt
     md1 = MolecularDynamics(
-        atoms=result["final_structure"],
+        atoms=relaxed_structure,
         model=chgnet,
         ensemble="nvt",
         temperature=Tstart,  # in K
