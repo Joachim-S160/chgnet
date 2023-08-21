@@ -11,8 +11,6 @@ import numpy as np
 
 def traj_to_cif(trajfile:str="chgnet/MyCHGNetCode/mdNPT2_out_HfF4.traj", stor_dir:str="chgnet/MyCHGNetCode/cif_files_frames/WCl6_NPT1", list_of_frames:list=[0]):
     """
-    Converts selected frames from a trajectory file to CIF format.
-
     Args:
         trajfile (str): Path to the trajectory file (*.traj).
         stor_dir (str): Directory where the CIF files will be stored.
@@ -20,6 +18,8 @@ def traj_to_cif(trajfile:str="chgnet/MyCHGNetCode/mdNPT2_out_HfF4.traj", stor_di
 
     Returns:
         None. CIF files are saved to the specified directory.
+        
+    Note:   Converts selected frames from a trajectory file to CIF format.
     """
     # Load the trajectory file
     traj = Trajectory(trajfile)
@@ -47,6 +47,7 @@ def files_to_cif(files: list, stor_dir: str, number_of_frames: int=1):
         number of frames: number of frames you want to convert to cif
     output: 
         cif files: *.cif
+    Note: for ovito GIF or MP4 purposes
     """
     # Convert all trajectory files to CIF
     for file in files:
@@ -63,6 +64,6 @@ def files_to_cif(files: list, stor_dir: str, number_of_frames: int=1):
 # traj_to_cif(trajfile='chgnet/MyCHGNetCode/2PCTrajectories/mdNVT_out_Al.traj', stor_dir='chgnet/MyCHGNetCode/2PC_Cif_Files', list_of_frames=[-1])
 # files_to_cif(["chgnet/MyCHGNetCode/data_out/mdNVT_out_HfF4.traj"], "chgnet/MyCHGNetCode/cif_files_frames/HfF4_NVT", 50)
 # traj_to_cif(trajfile='chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_WCl6_100.traj', stor_dir='chgnet/MyCHGNetCode/cif_files_frames/HfF4_NVT', list_of_frames=[-1])
-files_to_cif(["chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_WCl6_100.traj"], "chgnet/MyCHGNetCode/cif_files_frames/discrete_tungsten", 300)
+files_to_cif(["chgnet/MyCHGNetCode/data_out_2PC/mdNVT_out_Al.traj"], "chgnet/MyCHGNetCode/2PC_Cif_Files", 30)
 print("Done!")
     

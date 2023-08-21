@@ -66,7 +66,7 @@ def get_pressure(file: str):
     # sigma_ij = sigma_xx, sigma_yy, sigma_zz, sigma_xy, sigma_xz, sigma_yz
     # pressure = - 1/3 * (sigma_xx + sigma_yy + sigma_zz)
     traj = Trajectory(file)[:]
-    stresstensors = [atoms.get_stress() for atoms in traj]
+    stresstensors = [atoms.get_stress(include_ideal_gas=True) for atoms in traj]
     pressure = np.array([-1/3 * (sigma[0] + sigma[1] + sigma[2]) for sigma in stresstensors]) 
     # Conversion from eV/A^3 to GPa:
     pressure = pressure * 160.21766208

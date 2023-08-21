@@ -187,7 +187,7 @@ def linear_regression(x, y):
 # time_density_plot(["chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_WCl6_200.traj"])
 # time_density_plot(["chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_WCl6_300.traj"])
 
-time_density_plot(["chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_WCl6_100.traj"])
+# time_density_plot(["chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_WCl6_100.traj"])
 # temperature_density_plot(['chgnet/MyCHGNetCode/mdNPT2_out_HfF4.traj'])
 # temperature_enthalpy_plot(['chgnet/MyCHGNetCode/mdNPT2_out_WCl6.traj'])
 # temperature_enthalpy_plot(['chgnet/MyCHGNetCode/mdNPT2_out_HfF4.traj','chgnet/MyCHGNetCode/mdNPT2_out_LiCl.traj','chgnet/MyCHGNetCode/mdNPT2_out_TiBr4.traj','chgnet/MyCHGNetCode/mdNPT2_out_WCl6.traj','chgnet/MyCHGNetCode/mdNPT2_out_TiI4.traj'])

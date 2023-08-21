@@ -68,11 +68,15 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=300, Tend=2000, GPU
 
     # Make a axbxc supercell structure which is a*b*c copies of the original structure (noau atoms) = a*b*c*noau atoms
     relaxed_structure.make_supercell(Biggest_box(relaxed_structure))
+    
+    # Relax the supercell structure:
+    supercell_relaxed_structure_dict:dict = relaxer.relax(relaxed_structure)
+    supercell_relaxed_structure = supercell_relaxed_structure_dict["final_structure"]
 
     print('Presimulation code works, start md1')
     # eq at 400K via nvt
     md1 = MolecularDynamics(
-        atoms=relaxed_structure,
+        atoms=supercell_relaxed_structure,
         model=chgnet,
         ensemble="nvt",
         temperature=Tstart,  # in K
@@ -123,6 +127,6 @@ def Melting_point_simulation(molecule_name, cif_file, Tstart=300, Tend=2000, GPU
     md3.run(1*500*1000)  # run a 1 ns MD simulation
     print('md3 works, simulation finished')
 
-Melting_point_simulation('TbCl3', 'TbCl3.cif', 300, 1500, "cuda:3")
+Melting_point_simulation('WCl6', 'WCl6.cif', 100, 1200, "cuda:0")
 
 # Ask Bowen what default pressure is used in the NPT ensemble, show him pressure plot

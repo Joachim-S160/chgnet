@@ -15,7 +15,7 @@ from chgnet.model import CHGNet
 from ase.io import read, write
 from pymatgen.io.ase import AseAtomsAdaptor
 
-def Biggest_elongated_box(structure, a=5, b=1, c=1, x_factor=5):
+def Biggest_elongated_box(structure=None, a=5, b=1, c=1, x_factor=5, Max_atoms=600):
     """
     Args:   
         structure: pymatgen structure 
@@ -24,29 +24,41 @@ def Biggest_elongated_box(structure, a=5, b=1, c=1, x_factor=5):
     Returns: 
         dimensions of the biggest possible supercell box  
     
-    Note this function prefers the stretching of the box in the x direction  
+    Note this function prefers the stretching of the box in the x direction
+    Has extra functionality built in so that b and c lattice parameters are always bigger than 10 Angstrom
     """
     # Get number of atoms in unitcell
+
     noau = structure.num_sites
-    print(noau)
+    A_lattice, B_lattice, C_lattice = structure.lattice.abc
+
+    print(f"Number of atoms in unitcell: ", noau)
 
     noa = a * b * c * noau
+    assert noa != 0, "No atoms in unitcell"
+    assert noa < Max_atoms, f"Box is already bigger than {Max_atoms} atoms"
     # Update boxdimensions until noa is bigger than 500 or the boxdimensions are the same as before
-    while noa < 500:
+    while noa < Max_atoms:
         x, y, z = a, b, c
-        if (a + 1) * b * c * noau < 500 and (a + 1) >= x_factor * max(b, c):
+        if (a + 1) * b * c * noau < Max_atoms:
             a += 1
 
-        if a * (b + 1) * c * noau < 500 and a >= x_factor * max(b + 1, c):
+        if a * (b + 1) * c * noau < Max_atoms and a >= x_factor * max(b + 1, c):
             b += 1
 
-        if a * b * (c + 1) * noau < 500 and a >= x_factor * max(b, c + 1):
+        if a * b * (c + 1) * noau < Max_atoms and a >= x_factor * max(b, c + 1):
             c += 1
         if [x, y, z] == [a, b, c]:
             break
         noa = a * b * c * noau
-    print("Total number of atoms in the box: ", a*b*c*noau)
     print("Box dimensions: ", a, b, c)
+    print("Total number of atoms in the box: ", a*b*c*noau)
+    print(f"Boxsize supercell structure = {a * A_lattice, b * B_lattice, c * C_lattice} [Angstrom]")
+    assert b * B_lattice >= 10, f"b lattice parameter is smaller than 10 Angstrom, b lattice parameter is {b * B_lattice}"
+    assert c * C_lattice >= 10, f"c lattice parameter is smaller than 10 Angstrom, c lattice parameter is {c * C_lattice}"
+    assert a *A_lattice * 5 >= b * B_lattice, f"Box is not elongated enough, a lattice parameter is {a * A_lattice} and b lattice parameter is {b * B_lattice}"
+    assert a *A_lattice * 5 >= c * C_lattice, f"Box is not elongated enough, a lattice parameter is {a * A_lattice} and c lattice parameter is {c * C_lattice}"
+
     return [a, b, c]
 
 def simulation(molecule_name:str="Al", cif_file:str="Al.cif", temperature_fluid:int=2000, NVT_runtime:int="1000", GPU="cuda:2"):
@@ -86,6 +98,12 @@ def simulation(molecule_name:str="Al", cif_file:str="Al.cif", temperature_fluid:
     relaxed_structure.make_supercell(Biggest_elongated_box(relaxed_structure))
     Solid = relaxed_structure
 
+    # Test if the solid has at least 100 atoms
+    assert Solid.num_sites >= 100, "Solid has less than 100 atoms, too much finite size error will occur"
+
+    # create cif file of solid
+    Solid.to(filename="Solid_" + molecule_name + ".cif") #Solid:Structure, so .to() works and .write() doesn't
+
     # molecular dynamics simulations
     # melt at 2000K via nvt
     md1 = MolecularDynamics(atoms=Solid,
@@ -104,45 +122,10 @@ def simulation(molecule_name:str="Al", cif_file:str="Al.cif", temperature_fluid:
     Liquid = md1.atoms #ase.Atoms object
 
     # create cif files of solid and liquid
-    Solid.to(filename="Solid_" + molecule_name + ".cif") #Solid:Structure, so .to() works and .write() doesn't
+    
     Liquid.write(filename="Liquid_" + molecule_name + ".cif", format='cif') #Liquid:md.atoms,
     print("Solid and liquid cif files have been made")
 
-def NVE_simulation(input_file: str="final_al.cif", molecule_name: str="Al", runtime: int="1000", GPU="cuda:2"):
-    """
-    Args:
-        input_file: input file of the molecule
-        molecule_name: name of the molecule
-        runtime: runtime of the NVE simulation in ps
-        GPU: GPU to use
-    Returns:
-        None. Stores trajectory and log files in .traj and .log files
-    """
-    
-    # load structure
-    Atoms = read(input_file)
-    structure = AseAtomsAdaptor.get_structure(Atoms)
-    # print(f"structure: {structure}")
+simulation(molecule_name="LiCl", cif_file="LiCl.cif", temperature_fluid=1800, NVT_runtime=100, GPU="cuda:2")
 
-    # load model
-    chgnet = CHGNet.load()
-    print('structure and model loaded')
-    
-    md1 = MolecularDynamics(atoms=structure,
-                            model=chgnet,
-                            ensemble="nve",
-                            timestep=2, # in fs
-                            trajectory="mdNVE_out_" + molecule_name + ".traj",
-                            logfile="mdNVE_out_" + molecule_name + ".log",
-                            loginterval=100,
-                            use_device=GPU)
-
-    print('start md1')
-    md1.run(500*runtime)  # run an MD simulation to get a liquid structure (in ps)
-    print('finished md1')
-    
-
-
-# simulation(molecule_name="Al", cif_file="Al.cif", temperature_fluid=1800, NVT_runtime=1000, GPU="cuda:2")
-NVE_simulation(molecule_name="Al_combined", input_file="Al_final.cfg", runtime=0.1, GPU="cuda:2")
 

@@ -1,6 +1,7 @@
-# from pymatgen.core import Structure, Lattice
-# from pymatgen.io.vasp.outputs import Poscar
-# import numpy as np
+from pymatgen.core import Structure, Lattice
+from pymatgen.io.vasp.outputs import Poscar
+import numpy as np
+import os
 
 # # Load your structures from files or create them as needed
 # structure1 = Structure.from_file("TiBr4.cif")
@@ -35,7 +36,7 @@
 # structure1_with_vacuum.to(filename="solid_fluid_interface3.cif")
 # print("Combined structure has been made")
 
-def Biggest_elongated_box(structure, a=5, b=1, c=1, x_factor=5):
+def Biggest_elongated_box(structure=None, a=5, b=1, c=1, x_factor=5, Max_atoms=600):
     """
     Args:   
         structure: pymatgen structure 
@@ -44,29 +45,56 @@ def Biggest_elongated_box(structure, a=5, b=1, c=1, x_factor=5):
     Returns: 
         dimensions of the biggest possible supercell box  
     
-    Note this function prefers the stretching of the box in the x direction  
+    Note this function prefers the stretching of the box in the x direction
+    Has extra functionality built in so that b and c lattice parameters are always bigger than 10 Angstrom
     """
     # Get number of atoms in unitcell
+
     noau = structure.num_sites
-    print(noau)
+    A_lattice, B_lattice, C_lattice = structure.lattice.abc
+
+    print(f"Number of atoms in unitcell: ", noau)
 
     noa = a * b * c * noau
+    assert noa != 0, "No atoms in unitcell"
+    assert noa < Max_atoms, f"Box is already bigger than {Max_atoms} atoms"
     # Update boxdimensions until noa is bigger than 500 or the boxdimensions are the same as before
-    while noa < 500:
+    while noa < Max_atoms:
         x, y, z = a, b, c
-        if (a + 1) * b * c * noau < 500 and (a + 1) >= x_factor * max(b, c):
+        if (a + 1) * b * c * noau < Max_atoms:
             a += 1
 
-        if a * (b + 1) * c * noau < 500 and a >= x_factor * max(b + 1, c):
+        if a * (b + 1) * c * noau < Max_atoms and a >= x_factor * max(b + 1, c):
             b += 1
 
-        if a * b * (c + 1) * noau < 500 and a >= x_factor * max(b, c + 1):
+        if a * b * (c + 1) * noau < Max_atoms and a >= x_factor * max(b, c + 1):
             c += 1
         if [x, y, z] == [a, b, c]:
             break
         noa = a * b * c * noau
-    print("Total number of atoms in the box: ", a*b*c*noau)
     print("Box dimensions: ", a, b, c)
+    print("Total number of atoms in the box: ", a*b*c*noau)
+    print(f"Boxsize supercell structure = {a * A_lattice, b * B_lattice, c * C_lattice} [Angstrom]")
+    assert b * B_lattice >= 10, f"b lattice parameter is smaller than 10 Angstrom, b lattice parameter is {b * B_lattice}"
+    assert c * C_lattice >= 10, f"c lattice parameter is smaller than 10 Angstrom, c lattice parameter is {c * C_lattice}"
+    assert a *A_lattice * 5 >= b * B_lattice, f"Box is not elongated enough, a lattice parameter is {a * A_lattice} and b lattice parameter is {b * B_lattice}"
+    assert a *A_lattice * 5 >= c * C_lattice, f"Box is not elongated enough, a lattice parameter is {a * A_lattice} and c lattice parameter is {c * C_lattice}"
+
     return [a, b, c]
 
-print(Biggest_elongated_box(9))
+Biggest_elongated_box(structure = Structure.from_file("chgnet/MyCHGNetCode/cif_files_halides/LiCl_mp-22905_computed.cif"))
+
+def test_Biggest_elongated_box():
+    # Biggest_elongated_box(structure = Structure.from_file("chgnet/MyCHGNetCode/cif_files_halides/GeBr4_mp-567604_computed.cif"))
+    
+
+    folder_path = 'chgnet/MyCHGNetCode/cif_files_halides'
+    file_extension = '.cif'  # Change this to the desired file extension
+
+    for filename in os.listdir(folder_path):
+        if filename.endswith(file_extension) and os.path.isfile(os.path.join(folder_path, filename)):
+            print("File:", filename)
+            Biggest_elongated_box(structure = Structure.from_file(os.path.join(folder_path, filename)))
+    
+
+# test_Biggest_elongated_box()
