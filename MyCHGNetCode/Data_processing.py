@@ -9,7 +9,7 @@ from get_Data import get_temperature, get_enthalpy
 
 
 
-file = "chgnet/MyCHGNetCode/data_out/mdNPT2_out_HfF4.traj"
+file = "chgnet/MyCHGNetCode/data_out_heating/mdNPT2_out_LiCl.traj"
 
 Temperature = get_temperature(file)  
 
