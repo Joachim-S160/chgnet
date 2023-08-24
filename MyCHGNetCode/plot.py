@@ -198,7 +198,7 @@ def linear_regression(x, y):
 # time_temperature_plot(['chgnet/MyCHGNetCode/data_out_heating/mdNPT2_out_HfF4.traj','chgnet/MyCHGNetCode/data_out_heating/mdNPT2_out_TiBr4.traj', 'chgnet/MyCHGNetCode/data_out_heating/mdNPT2_out_TiI4.traj'])
 # time_pressure_plot(["chgnet/MyCHGNetCode/data_out_heating/mdNPT2_out_HfF4.traj"])
 # time_kinetic_energy_and_potential_energy_plot(["chgnet/MyCHGNetCode/data_out_heating/mdNPT2_out_HfF4.traj"])
-time_density_plot(["chgnet/MyCHGNetCode/data_out_heating/mdNPT1_out_TiI4.traj"])
+# time_density_plot(["chgnet/MyCHGNetCode/data_out_heating/mdNPT1_out_TiI4.traj"])
 def loopdyloop(listoffiles):
     """
     Args: list of files

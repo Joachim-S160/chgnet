@@ -3,8 +3,10 @@ from chgnet_wNVE.chgnet.model import MolecularDynamics
 from chgnet_wNVE.chgnet.model import StructOptimizer
 from pymatgen.core import Structure
 from chgnet_wNVE.chgnet.model import CHGNet
+from ase.md.velocitydistribution import MaxwellBoltzmannDistribution, Stationary
+from ase.io import read
 
-def NVE_simulation(molecule_name: str="Al", input_file: str="final_al.cif",  runtime: int="1000", GPU="cuda:2"):
+def NVE_simulation(molecule_name: str="Al", input_file: str="final_al.cif",  runtime: int=1000, temperature:int=1000, GPU="cuda:2"):
     """
     Args:
         input_file: input file of the molecule
@@ -18,24 +20,14 @@ def NVE_simulation(molecule_name: str="Al", input_file: str="final_al.cif",  run
     # load model
     chgnet = CHGNet.load()    
     # load structure
-    structure = Structure.from_file(input_file)
-    print(f"structure: {structure}")
-    print(f"Number of atoms: {structure.num_sites}")
+    atoms = read(input_file) #ASE structure
     print('structure and model loaded')
     
-    # Perform ionic relaxation (no Volume change)
-    # = Relax the structure so that the atoms are moved to positions with lower potential energy but the cell size is NOT adjusted to the optimal size with no stresses.
-    relaxer = StructOptimizer()
-    relaxed_structure_dict:dict = relaxer.relax(structure, relax_cell=False)
-    print(
-        f"\nCHGNet took {len(relaxed_structure_dict['trajectory'])} steps. Relaxed structure:")
-    print(relaxed_structure_dict["final_structure"])
-    relaxed_structure:Structure = relaxed_structure_dict["final_structure"]
-    relaxed_structure.to(filename="Relaxed_combined_structure_" + molecule_name + ".cif")
-    # Check if relaxed structure is a structure type
-    assert isinstance(relaxed_structure,Structure), "Relaxed structure is not a structure type"
-    
-    md1 = MolecularDynamics(atoms=relaxed_structure,
+    # Set the momenta corresponding to the given "temperature" through velocity scaling
+    MaxwellBoltzmannDistribution(atoms, temperature_K=temperature,force_temp=True)
+    Stationary(atoms)  # Set zero total momentum to avoid drifting
+
+    md1 = MolecularDynamics(atoms=atoms,
                             model=chgnet,
                             ensemble="nve",
                             timestep=1, # in fs (smaller timestep because CHGNet forces are conservative, but large MD timestep can make the numeric integration non conservative)
@@ -45,7 +37,7 @@ def NVE_simulation(molecule_name: str="Al", input_file: str="final_al.cif",  run
                             use_device=GPU)
 
     print('start md1')
-    md1.run(1000*runtime)  # run an MD simulation to get a liquid structure (in ps)
+    md1.run(1000*runtime)  # run an MD simulation (in ps)
     print('finished md1')
     
-NVE_simulation(molecule_name="Al_combined", input_file="POSCAR", runtime=1000, GPU="cuda:3")
+NVE_simulation(molecule_name="Al_combined_relaxed", input_file="Al_combined_relaxed.cif", runtime=0.2, GPU="cuda:0")

@@ -1,7 +1,7 @@
 """
 
 Description:
-Aluminum melting point prediction using CHGNet
+Melting point prediction using CHGNet
 and the 2 phase coexistence method
 WATCH OUT WITHOUT RELAXING THE STRUCTURE FIRST THE MD CAN EXPLODE
 

@@ -61,14 +61,15 @@ def Biggest_elongated_box(structure=None, a=5, b=1, c=1, x_factor=5, Max_atoms=6
     # Update boxdimensions until noa is bigger than 500 or the boxdimensions are the same as before
     while noa < Max_atoms:
         x, y, z = a, b, c
-        if (a + 1) * b * c * noau < Max_atoms:
-            a += 1
+
 
         if a * (b + 1) * c * noau < Max_atoms and a >= x_factor * max(b + 1, c):
             b += 1
 
         if a * b * (c + 1) * noau < Max_atoms and a >= x_factor * max(b, c + 1):
             c += 1
+        if (a + 1) * b * c * noau < Max_atoms:
+            a += 1
         if [x, y, z] == [a, b, c]:
             break
         noa = a * b * c * noau
@@ -82,7 +83,7 @@ def Biggest_elongated_box(structure=None, a=5, b=1, c=1, x_factor=5, Max_atoms=6
 
     return [a, b, c]
 
-Biggest_elongated_box(structure = Structure.from_file("chgnet/MyCHGNetCode/cif_files_halides/LiCl_mp-22905_computed.cif"))
+Biggest_elongated_box(structure = Structure.from_file("chgnet/MyCHGNetCode/cif_files_halides/TiI4_mp-541013_computed.cif"))
 
 def test_Biggest_elongated_box():
     # Biggest_elongated_box(structure = Structure.from_file("chgnet/MyCHGNetCode/cif_files_halides/GeBr4_mp-567604_computed.cif"))
