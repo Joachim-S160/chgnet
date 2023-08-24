@@ -5,7 +5,7 @@ Transform trajectory data (ASE) to a small number of cif files, each cif file co
 
 """
 
-from plot import get_molecule_name
+from GetName import get_molecule_name
 from ase.io.trajectory import Trajectory
 import numpy as np
 
@@ -62,7 +62,10 @@ def files_to_cif(files: list, stor_dir: str, number_of_frames: int=1):
 # test
 # files_to_cif(["chgnet/MyCHGNetCode/mdNPT2_out_HfF4.traj", "chgnet/MyCHGNetCode/mdNPT2_out_LiCl.traj", "chgnet/MyCHGNetCode/mdNPT2_out_TiBr4.traj", "chgnet/MyCHGNetCode/mdNPT2_out_TiI4.traj", "chgnet/MyCHGNetCode/mdNPT2_out_WCl6.traj", "chgnet/MyCHGNetCode/mdNPT3_out_Al.traj" ], 300)
 # traj_to_cif(trajfile='chgnet/MyCHGNetCode/2PCTrajectories/mdNVT_out_Al.traj', stor_dir='chgnet/MyCHGNetCode/2PC_Cif_Files', list_of_frames=[-1])
-files_to_cif(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_cr_desta.traj"], "chgnet/MyCHGNetCode/2PC_Cif_Files_frames/LiCl_relaxed_NVE", 100)
+
+# files_to_cif(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_Al_cr_desta.traj"], "chgnet/MyCHGNetCode/2PC_Cif_Files_frames/Al_relaxed_NVE", 200)
+files_to_cif(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_Al_combined.traj"], "chgnet/MyCHGNetCode/2PC_Cif_Files_frames/Al", 200)
+
 # traj_to_cif(trajfile='chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_WCl6_100.traj', stor_dir='chgnet/MyCHGNetCode/cif_files_frames/HfF4_NVT', list_of_frames=[-1])
 # files_to_cif(["chgnet/MyCHGNetCode/data_out_2PC/mdNVT_out_Al.traj"], "chgnet/MyCHGNetCode/2PC_Cif_Files", 30)
 # traj_to_cif(trajfile='chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_combined.traj', stor_dir='chgnet/MyCHGNetCode/2PC_strcutures/LiCL', list_of_frames=[-1])

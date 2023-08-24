@@ -9,30 +9,12 @@ Multiple files can be plotted on the same graph
 import matplotlib.pyplot as plt
 import numpy as np
 from get_Data import *
+from GetName import get_molecule_name
 
 # use different colors for different files
 colors = ['ro', 'bo', 'go', 'yo', 'mo', 'co', 'ko',
                      'rs', 'bs', 'gs', 'ys', 'ms', 'cs', 'ks',
                      'r^', 'b^', 'g^', 'y^', 'm^', 'c^', 'k^']
-
-def get_molecule_name(file:str):
-    """
-    Args: file
-    returns: molecule name
-    """
-    
-    input_string = file
-
-    # Get the index of the last occurrence of '/'
-    last_slash_index = input_string.rfind('/')
-
-    # Get the index of the first occurrence of '.'
-    dot_index = input_string.find('.')
-
-    # Extract the substring between the last slash and the first dot (exclusive)
-    desired_substring = input_string[last_slash_index + 12:dot_index]
-
-    return desired_substring
 
 def time_temperature_plot(files: list):
     """
@@ -186,7 +168,8 @@ def linear_regression(x, y):
 # time_density_plot(["chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_WCl6_100.traj"])
 # time_density_plot(["chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_WCl6_200.traj"])
 # time_density_plot(["chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_WCl6_300.traj"])
-
+time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_Al_cr_desta.traj", "chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_cr_desta.traj"])
+time_pressure_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_Al_cr_desta.traj", "chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_cr_desta.traj"])
 # time_density_plot(["chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_WCl6_100.traj"])
 # temperature_density_plot(['chgnet/MyCHGNetCode/mdNPT2_out_HfF4.traj'])
 # temperature_enthalpy_plot(['chgnet/MyCHGNetCode/mdNPT2_out_WCl6.traj'])
