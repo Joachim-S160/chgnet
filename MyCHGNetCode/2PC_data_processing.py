@@ -38,7 +38,7 @@ def time_temperature_plot(files: list, window_size: int=0.7):
         plt.ylabel('temperature (K)')
     plt.legend()
     plt.show()
-time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_cr_desta.traj"])
+# time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_cr_desta.traj"])
 
 # Do the same for pressure:
 
@@ -58,9 +58,11 @@ def time_pressure_plot(files: list, window_size: int=0.7):
         average_pressure = time_averaging(pressure, window_size)
         last_time = time[-1]
         y_err = convergence_error(pressure, window_size)
-        plt.errorbar(last_time, average_pressure, yerr=y_err, fmt='o', color='black', label='Melting point '+ name +': ' +
+        plt.errorbar(last_time, average_pressure, yerr=y_err, fmt='o', color='black', label='Pressure Melting Point '+ name +': ' +
                  str(np.round(average_pressure, 2)) + ' +/- ' + str(round(y_err, 2)) + ' GPa')  
         plt.xlabel('time (ps)')
         plt.ylabel('pressure (GPa)')
     plt.legend()
     plt.show()
+    
+time_pressure_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_Al_cr_desta.traj"])
