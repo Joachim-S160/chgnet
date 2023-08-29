@@ -159,6 +159,10 @@ def linear_regression(x, y):
     a, b = np.polyfit(x, y, deg=1)
     return a, b
 
+# time_density_plot(["chgnet/MyCHGNetCode/data_out_heating/mdNPT2_out_LiCl.traj"])
+# temperature_density_plot(["chgnet/MyCHGNetCode/data_out_heating/mdNPT2_out_LiCl.traj"])
+# temperature_density_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_cr_desta.traj"])
+
 # discrete_temperature_density_plot()
 # density_time_plot_DISCRETE()
 # density temperature discrete points diff md's, equilibrating each for 50 ps, WCl6, default taut, 100K steps around melting point, 6 points
@@ -168,8 +172,8 @@ def linear_regression(x, y):
 # time_density_plot(["chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_WCl6_100.traj"])
 # time_density_plot(["chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_WCl6_200.traj"])
 # time_density_plot(["chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_WCl6_300.traj"])
-time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_Al_cr_desta.traj", "chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_cr_desta.traj"])
-time_pressure_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_Al_cr_desta.traj", "chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_cr_desta.traj"])
+# time_total_energy_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_Al_cr_desta.traj", "chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_cr_desta.traj"])
+# time_pressure_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_Al_cr_desta.traj", "chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_cr_desta.traj"])
 # time_density_plot(["chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_WCl6_100.traj"])
 # temperature_density_plot(['chgnet/MyCHGNetCode/mdNPT2_out_HfF4.traj'])
 # temperature_enthalpy_plot(['chgnet/MyCHGNetCode/mdNPT2_out_WCl6.traj'])

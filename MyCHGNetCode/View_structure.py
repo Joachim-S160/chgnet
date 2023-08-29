@@ -64,7 +64,7 @@ def files_to_cif(files: list, stor_dir: str, number_of_frames: int=1):
 # traj_to_cif(trajfile='chgnet/MyCHGNetCode/2PCTrajectories/mdNVT_out_Al.traj', stor_dir='chgnet/MyCHGNetCode/2PC_Cif_Files', list_of_frames=[-1])
 
 # files_to_cif(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_Al_cr_desta.traj"], "chgnet/MyCHGNetCode/2PC_Cif_Files_frames/Al_relaxed_NVE", 200)
-files_to_cif(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_Al_combined.traj"], "chgnet/MyCHGNetCode/2PC_Cif_Files_frames/Al", 200)
+files_to_cif(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_combined_relaxed_expanded11.traj"], "chgnet/MyCHGNetCode/2PC_Cif_Files_frames/LiCl_relaxed_expanded", 200)
 
 # traj_to_cif(trajfile='chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_WCl6_100.traj', stor_dir='chgnet/MyCHGNetCode/cif_files_frames/HfF4_NVT', list_of_frames=[-1])
 # files_to_cif(["chgnet/MyCHGNetCode/data_out_2PC/mdNVT_out_Al.traj"], "chgnet/MyCHGNetCode/2PC_Cif_Files", 30)

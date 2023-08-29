@@ -25,7 +25,7 @@ lattice_with_vacuum = Lattice.from_parameters(*lattice_params_vacuum, *angles_va
 border = np.array([[borderlength/2 , 0, 0] for _ in range(structure2.cart_coords.shape[0])])
 assert border.shape == structure2.cart_coords.shape, f"The border (shape = {border.shape}) vector must have the same shape as the coordinates of structure2 (shape = {structure2.cart_coords.shape}))"
 structure1_with_vacuum = Structure(lattice_with_vacuum, species=structure1.species, coords=structure1.cart_coords + border, coords_are_cartesian=True)
-translation = np.array([[lattice_params_vacuum[0]*(2/4) , 0, 0] for _ in range(structure2.cart_coords.shape[0])])
+translation = np.array([[lattice_params_vacuum[0]*(1/2) , 0, 0] for _ in range(structure2.cart_coords.shape[0])])
 assert translation.shape == structure2.cart_coords.shape, "The translation vector must have the same shape as the coordinates of structure2"
 structure2_with_vacuum = Structure(lattice_with_vacuum, species=structure2.species, coords=structure2.cart_coords - border + translation, coords_are_cartesian=True)
 

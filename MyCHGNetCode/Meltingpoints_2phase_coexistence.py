@@ -84,7 +84,7 @@ def simulation(molecule_name:str="Al", cif_file:str="Al.cif", temperature_fluid:
     chgnet = CHGNet.load()
 
     # Relax the structure so that the atoms are moved to positions with lower potential energy and the cell size is adjusted to the optimal size with no stresses.
-    relaxer = StructOptimizer()
+    relaxer = StructOptimizer(use_device=GPU)
     relaxed_structure_dict:dict = relaxer.relax(structure, verbose=True)
     print(
         f"\nCHGNet took {len(relaxed_structure_dict['trajectory'])} steps. Relaxed structure:")
@@ -126,6 +126,6 @@ def simulation(molecule_name:str="Al", cif_file:str="Al.cif", temperature_fluid:
     Liquid.write(filename="Liquid_" + molecule_name + ".cif", format='cif') #Liquid:md.atoms,
     print("Solid and liquid cif files have been made")
 
-simulation(molecule_name="LiCl", cif_file="LiCl.cif", temperature_fluid=1800, NVT_runtime=100, GPU="cuda:2")
+simulation(molecule_name="LiF", cif_file="LiF.cif", temperature_fluid=1800, NVT_runtime=30, GPU="cuda:2")
 
 

@@ -29,6 +29,14 @@ def get_temperature(file: str):
     traj = Trajectory(file)[:]
     return np.array([atoms.get_temperature() for atoms in traj])
 
+def get_number_of_atoms(file:str):
+    """
+    input = trajectory file
+    output = 1D array of number of atoms
+    """
+    traj = Trajectory(file)[:]
+    return np.array([len(atoms) for atoms in traj])
+
 def get_time(file: str):
     """
     input = trajectory file
