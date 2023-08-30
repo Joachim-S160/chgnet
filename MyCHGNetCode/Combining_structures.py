@@ -1,41 +1,70 @@
+"""
 
+The purpose of this script is to combine two structures into one structure using pymatgen
+
+"""
 
 from pymatgen.core import Structure, Lattice
 from pymatgen.io.vasp.outputs import Poscar
 import numpy as np
 
-# Load the structures from files or create them as needed
-structure1 = Structure.from_file("Solid_Al.cif")
-structure2 = Structure.from_file("Fluid_Al.cif")
+def combined_structure(Solid_cif:str="Solid_Al.cif", Fluid_cif:str="Fluid_Al.cif", name:str="solid_fluid_interface_LiS.cif", borderlength:float=0, separation_vacuum_length:float=2):
+    """
+    Args:
+        Solid_cif: path to the cif file of the solid structure
+        Fluid_cif: path to the cif file of the fluid structure
+        borderlength: length of the extra vacuum layers at the edges of the combined structure in the x direction [Angstrom]
+        separation_vacuum_length: length of the vacuum layer between the two structures at the interface [Angstrom]
+    Returns:    
+        None. Stores the combined structure in a cif file
+    Note: 
+        The two structures must have the same lattice parameters and angles, which after an NVT simulation is the case
+    """
 
-borderlength = 1 #Angstrom
-# Calculate the lattice parameters for the vacuum layers (twice the original x lattice parameter)
-# assert structure2.lattice.abc == structure1.lattice.abc, "The two structures must have the same lattice parameters"
-lattice_params_vacuum = [2 * structure1.lattice.abc[0] + borderlength, structure1.lattice.abc[1], structure1.lattice.abc[2]] # +border in Angstrom for borders
-print(f"Boxsize combined structure = {lattice_params_vacuum}")
+    # Load the structures from files or create them as needed
+    Solid = Structure.from_file(Solid_cif)
+    Fluid = Structure.from_file(Fluid_cif)
 
-# Calculate the angles of the lattice
-# assert structure1.lattice.angles == structure2.lattice.angles, "The two structures must have the same lattice angles"
-angles_vacuum = structure2.lattice.angles
+    # Calculate the angles of the lattice
+    # assert Solid.lattice.angles == Fluid.lattice.angles, "The two structures must have the same lattice angles"
+    angles_vacuum = Fluid.lattice.angles
+    gamma = angles_vacuum[2]
 
-# Create a new lattice with vacuum layers 
-lattice_with_vacuum = Lattice.from_parameters(*lattice_params_vacuum, *angles_vacuum)
+    # Calculate the lattice parameters for the vacuum layers (twice the original x lattice parameter)
+    # assert Fluid.lattice.abc == Solid.lattice.abc, "The two structures must have the same lattice parameters"
+    lattice_params_vacuum = [2 * Fluid.lattice.abc[0] + (2 * borderlength + 2 * separation_vacuum_length), 
+                             Fluid.lattice.abc[1], Fluid.lattice.abc[2]] 
+    print(f"Boxsize combined structure = {lattice_params_vacuum}")
+    print(f"Boxsize solid structure = {Solid.lattice.abc}")
+    print(f"Boxsize fluid structure = {Fluid.lattice.abc}")
 
-# Create vacuum layers on top and bottom of structure1 and structure2
-border = np.array([[borderlength/2 , 0, 0] for _ in range(structure2.cart_coords.shape[0])])
-assert border.shape == structure2.cart_coords.shape, f"The border (shape = {border.shape}) vector must have the same shape as the coordinates of structure2 (shape = {structure2.cart_coords.shape}))"
-structure1_with_vacuum = Structure(lattice_with_vacuum, species=structure1.species, coords=structure1.cart_coords + border, coords_are_cartesian=True)
-translation = np.array([[lattice_params_vacuum[0]*(1/2) , 0, 0] for _ in range(structure2.cart_coords.shape[0])])
-assert translation.shape == structure2.cart_coords.shape, "The translation vector must have the same shape as the coordinates of structure2"
-structure2_with_vacuum = Structure(lattice_with_vacuum, species=structure2.species, coords=structure2.cart_coords - border + translation, coords_are_cartesian=True)
+    # Create a new lattice with pure vacuum layers 
+    lattice_with_vacuum = Lattice.from_parameters(*lattice_params_vacuum, *angles_vacuum)
 
+    # Create border and interface vacuum layers
+    # border = np.array([[borderlength, 0, 0] for _ in range(Fluid.cart_coords.shape[0])])
+    interface_vacuum = np.array([[separation_vacuum_length, 0, 0] for _ in range(Fluid.cart_coords.shape[0])])
+    
+    Vacuum_with_solid = Structure(lattice_with_vacuum, species=Solid.species, coords=Solid.cart_coords, coords_are_cartesian=True)
+    translation = np.array([[0.5 , 0, 0] for _ in range(Fluid.cart_coords.shape[0])])
+    print(f"vacuum with solid lattice abc = {Vacuum_with_solid.lattice.abc}")
+    assert translation.shape == Fluid.cart_coords.shape, "The translation vector must have the same shape as the coordinates of Fluid"
+    new_coords = np.zeros_like(Fluid.frac_coords)
+    new_coords[:,0] += translation[:,0]
+    # Adding vacuum by scaling
+    new_coords[:,0] += Fluid.frac_coords[:,0]/2 * 2 * Fluid.lattice.abc[0] / lattice_params_vacuum[0]
+    new_coords[:,1] += Fluid.frac_coords[:,1]
+    new_coords[:,2] += Fluid.frac_coords[:,2]
+    Vacuum_with_fluid = Structure(lattice_with_vacuum, species=Fluid.species, 
+                                  coords=new_coords, coords_are_cartesian=False)
+    Vacuum_with_fluid.to(filename="vacuum_with_fluid.cif")
+    
+    # Append atoms from Vacuum_with_fluid to Vacuum_with_solid
+    for site in Vacuum_with_fluid:
+        Vacuum_with_solid.append(site.specie, site.coords, coords_are_cartesian=True)
+        
+    # Save the combined structure to a CIF file
+    Vacuum_with_solid.to(filename=name)
+    print("combined structure has been made")
 
-# Append atoms from structure2_with_vacuum to structure1_with_vacuum
-for site in structure2_with_vacuum:
-    structure1_with_vacuum.append(site.specie, site.frac_coords, coords_are_cartesian=False)
-
-# Save the combined structure to a CIF file
-structure1_with_vacuum.to(filename="solid_fluid_interface_Al.cif")
-print("combined structure has been made")
-
-# Melted to fast with the heating method: WCl6, TiI4, TiBr4,
+combined_structure(Solid_cif="Solid_LiCl.cif", Fluid_cif="Fluid_LiCl.cif", name = "solid_fluid_interface_LiCl.cif", borderlength=0, separation_vacuum_length=2)
