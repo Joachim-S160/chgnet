@@ -86,17 +86,18 @@ def time_averaged_Etot_plot(files: list, averagingfactor: int=1):
     plt.legend()
     plt.show()
 
-def time_temperature_plot(files: list, window_size: int=0.7):
+def time_temperature_plot(files: list,extra_tags: list= [""], window_size: int=0.7 ):
     """
     Args: 
-        list of trajectory files
+        files: list of trajectory files
+        extra_tags: extra name tags to add
         window_size: window size for time averaging
     returns: plot of time vs temperature    
     """
-    for file in files:
+    for file, extra_tag in zip(files, extra_tags):
         time = get_time(file)/2 # convert from 2 fs timestep to 1 fs timestep
         temperature = get_temperature(file)
-        name = get_molecule_name(file)
+        name = get_molecule_name(file, extra_tag=extra_tag)
         plt.plot(time, temperature, colors[files.index(file)], label= name)
         # Plot average temperature point with error bars on the plot
         average_temp = time_averaging(temperature, window_size)
@@ -134,12 +135,23 @@ def time_pressure_plot(files: list, window_size: int=0.7):
         plt.ylabel('pressure (GPa)')
     plt.legend()
     plt.show()
-    
-time_pressure_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_combined_relaxed_expanded.traj"])
-time_averaged_Etot_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_combined_relaxed_expanded.traj"])
-time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_combined_relaxed_expanded.traj"])
 
-    
+
+# time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiBr_junction_relaxed.traj",
+#                        "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiBr_junction_relaxed_800K.traj",
+#                        "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiBr_junction_relaxed_1000K.traj"],["_2000K","_800K", "_1000K"])
+time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiF_junction_relaxed.traj",
+                       "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiF_junction_relaxed_2250K.traj"],["_2000K","_2250K"])
+
+# time_pressure_plot(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2O_junction_relaxed.traj",
+                    # "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2S_junction_relaxed.traj",
+                    # "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2Se_junction_relaxed.traj"])
+# time_averaged_Etot_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_combined_relaxed_expanded.traj"])
+# time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2O_junction_relaxed.traj",
+                    # "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2S_junction_relaxed.traj",
+                    # "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2Se_junction_relaxed.traj"])
+# time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiF_junction_relaxed.traj"])
+# time_averaged_Etot_plot(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiF_junction_relaxed.traj"])
 # time_pressure_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_Al_cr_desta.traj"])
 # time_total_energy_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_Al_cr_desta.traj"])
 # time_total_energy_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_cr_desta.traj"])

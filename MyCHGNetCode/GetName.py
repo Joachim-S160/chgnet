@@ -1,7 +1,10 @@
-def get_molecule_name(file: str):
+def get_molecule_name(file: str, extra_tag: str = ""):
     """
-    Args: file
-    returns: molecule name
+    Args:   
+        file: file to get the name of the molecule from
+        extra_tag: extra tag to end at the end of the molecule name e.g.: _1000K
+    returns: 
+        molecule name
     """
     
     input_string = file
@@ -21,5 +24,5 @@ def get_molecule_name(file: str):
     if third_underscore_index != -1:
         desired_substring = desired_substring[:third_underscore_index]
 
-    return desired_substring
+    return desired_substring + extra_tag 
 
