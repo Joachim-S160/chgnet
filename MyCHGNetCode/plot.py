@@ -159,10 +159,11 @@ def linear_regression(x, y):
     a, b = np.polyfit(x, y, deg=1)
     return a, b
 
+time_total_energy_plot(["chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_Al_100.traj"])
 # time_density_plot(["chgnet/MyCHGNetCode/data_out_heating/mdNPT2_out_LiCl.traj"])
 # temperature_density_plot(["chgnet/MyCHGNetCode/data_out_heating/mdNPT2_out_LiCl.traj"])
 # temperature_density_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_cr_desta.traj"])
-
+# time_pressure_plot(["chgnet/MyCHGNetCode/data_out_discrete_Tr/mdNPT_out_Al_100.traj"])
 # discrete_temperature_density_plot()
 # density_time_plot_DISCRETE()
 # density temperature discrete points diff md's, equilibrating each for 50 ps, WCl6, default taut, 100K steps around melting point, 6 points

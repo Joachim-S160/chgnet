@@ -105,21 +105,51 @@ def files_to_cif(files: list, stor_dir: list, number_of_frames: int=1):
 #                 "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/LiBr_PMJ_1000K",
 #                 "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li2CO3_PMJ_1000K"], 100)
 
-files_to_cif(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiF_junction_relaxed_2250K.traj",
-              "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiCl_junction_relaxed_2600K.traj",
-              "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiBr_junction_relaxed_800K.traj",
-              "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li3N_junction_relaxed_600K.traj",
-              "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2Se_junction_relaxed_1000K.traj",
+# files_to_cif(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiF_junction_relaxed_2250K.traj",
+#               "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiCl_junction_relaxed_2600K.traj",
+#               "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiBr_junction_relaxed_800K.traj",
+#               "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li3N_junction_relaxed_600K.traj",
+#               "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2Se_junction_relaxed_1000K.traj",
+#               "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2S_junction_relaxed_1000K.traj",
+#               "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2O_junction_relaxed_2600K.traj"
+#               ],
+#              ["chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/LiF_2250K",
+#               "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/LiCl_2600K",
+#               "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/LiBr_800K",
+#               "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li3N_600K",
+#               "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li2Se_1000K",
+#               "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li2S_1000K",
+#               "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li2O_2600K"
+#               ], 200)
+
+# files_to_cif(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2CO3_junction_relaxed_1000K.traj"], ["chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li2CO3_1000K"], 200)
+
+
+files_to_cif(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiCl_junction_relaxed_1600K.traj",
+              "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2O_junction_relaxed_2400K.traj",
+              "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2O_junction_relaxed_2200K.traj",
+              "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2O_junction_relaxed.traj",
+              "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2S_junction_relaxed_1600K.traj",
+              "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2S_junction_relaxed_1400K.traj",
               "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2S_junction_relaxed_1000K.traj",
-              "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2O_junction_relaxed_2600K.traj"
-              ],
-             ["chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/LiF_2250K",
-              "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/LiCl_2600K",
-              "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/LiBr_800K",
-              "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li3N_600K",
-              "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li2Se_1000K",
+              "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2Se_junction_relaxed_1900K.traj",
+              "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li3N_junction_relaxed_400K.traj",
+              "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiF_junction_relaxed_2600K.traj",
+              "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiF_junction_relaxed_2250K.traj",
+              "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2CO3_junction_relaxed_1000K.traj"
+                            ],
+             ["chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/LiCl_1600K",
+              "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li2O_2400K",
+              "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li2O_2200K",
+              "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li2O_2000K",
+              "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li2S_1600K",
+              "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li2S_1400K",
               "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li2S_1000K",
-              "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li2O_2600K"
+              "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li2Se_1900K",
+              "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li3N_400K",
+              "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/LiF_2600K",
+              "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/LiF_2250K",
+              "chgnet/MyCHGNetCode/2PC_Cif_Files_frames_PMJ/Li2CO3_1000K"
               ], 200)
 
 print("Done!")

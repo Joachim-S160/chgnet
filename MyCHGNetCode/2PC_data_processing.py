@@ -13,24 +13,28 @@ from GetName import get_molecule_name
 
 # use different colors for different files
 colors = ['ro', 'bo', 'go', 'yo', 'mo', 'co', 'ko',
-                     'rs', 'bs', 'gs', 'ys', 'ms', 'cs', 'ks',
-                     'r^', 'b^', 'g^', 'y^', 'm^', 'c^', 'k^']
+          'rs', 'bs', 'gs', 'ys', 'ms', 'cs', 'ks',
+          'r^', 'b^', 'g^', 'y^', 'm^', 'c^', 'k^']
 
-def time_total_energy_plot(files:list) -> None:
+
+def time_total_energy_plot(files: list) -> None:
     """
     Args: list of trajectory files
     returns: time vs total energy plot    
     """
     for file in files:
-        time = get_time(file)/2 # convert from 2 fs timestep to 1 fs timestep
+        time = get_time(file)/2  # convert from 2 fs timestep to 1 fs timestep
         Etot = get_total_energy(file)
-        plt.plot(time, Etot, colors[files.index(file)], marker='o', linestyle='none', label= f"{get_molecule_name(file)} total energy")
+        plt.plot(time, Etot, colors[files.index(
+            file)], marker='o', linestyle='none', label=f"{get_molecule_name(file)} total energy")
     plt.xlabel('time (ps)')
     plt.ylabel('energy (eV)')
     plt.legend()
     plt.show()
 
 # Average based on decimal cut-off
+
+
 def discrete_averaging_system(x, y):
     """
     Args:
@@ -51,6 +55,8 @@ def discrete_averaging_system(x, y):
     return x_uniques, AV
 
 # Average out quantity every 1 unit or more
+
+
 def discrete_averaged_quantity(x, y, averagingfactor=1):
     """
     Args:
@@ -62,7 +68,8 @@ def discrete_averaged_quantity(x, y, averagingfactor=1):
     x_, y_ = discrete_averaging_system(x, y)
     return x_*averagingfactor, y_
 
-def time_averaged_Etot_plot(files: list, averagingfactor: int=1):
+
+def time_averaged_Etot_plot(files: list, averagingfactor: int = 1):
     """
     Args: 
         files: list of trajectory files
@@ -70,23 +77,28 @@ def time_averaged_Etot_plot(files: list, averagingfactor: int=1):
     Returns:
         plot of time vs discrete averaged (total energy - time average)
     """
-    
+
     for file in files:
-        time = get_time(file)[:]/2 # convert from 2 fs timestep to 1 fs timestep
+        # convert from 2 fs timestep to 1 fs timestep
+        time = get_time(file)[:]/2
         number_of_atoms = get_number_of_atoms(file)[:]
         Etot = get_total_energy(file)[:]
         # Change to per atom
         Etot_per_atom = Etot/number_of_atoms
-        plt.plot(time, Etot_per_atom, [color for color in reversed(colors)][files.index(file)], marker='o', linestyle='none', label= f"{get_molecule_name(file)} total energy per atom")
+        plt.plot(time, Etot_per_atom, [color for color in reversed(colors)][files.index(
+            file)], marker='o', linestyle='none', label=f"{get_molecule_name(file)} total energy per atom")
         # Do unit averagin
-        discrete_averaged_time, discrete_averaged_Etot = discrete_averaged_quantity(time, Etot_per_atom, averagingfactor)
-        plt.plot(discrete_averaged_time, discrete_averaged_Etot, colors[files.index(file)], marker='o', linestyle='none', label= f"{get_molecule_name(file)} total energy per atom, unit averaged")
+        discrete_averaged_time, discrete_averaged_Etot = discrete_averaged_quantity(
+            time, Etot_per_atom, averagingfactor)
+        plt.plot(discrete_averaged_time, discrete_averaged_Etot, colors[files.index(
+            file)], marker='o', linestyle='none', label=f"{get_molecule_name(file)} total energy per atom, unit averaged")
     plt.xlabel('time (ps)')
     plt.ylabel('Total energy (eV)')
     plt.legend()
     plt.show()
 
-def time_temperature_plot(files: list,extra_tags: list= [""], window_size: int=0.7 ):
+
+def time_temperature_plot(files: list, extra_tags: list = [""], window_size: int = 0.7):
     """
     Args: 
         files: list of trajectory files
@@ -95,16 +107,16 @@ def time_temperature_plot(files: list,extra_tags: list= [""], window_size: int=0
     returns: plot of time vs temperature    
     """
     for file, extra_tag in zip(files, extra_tags):
-        time = get_time(file)/2 # convert from 2 fs timestep to 1 fs timestep
+        time = get_time(file)/2  # convert from 2 fs timestep to 1 fs timestep
         temperature = get_temperature(file)
         name = get_molecule_name(file, extra_tag=extra_tag)
-        plt.plot(time, temperature, colors[files.index(file)], label= name)
+        plt.plot(time, temperature, colors[files.index(file)], label=name)
         # Plot average temperature point with error bars on the plot
         average_temp = time_averaging(temperature, window_size)
         last_time = time[-1]
         y_err = convergence_error(temperature, window_size)
-        plt.errorbar(last_time, average_temp, yerr=y_err, fmt='o', color='black', label='Melting point '+ name +': ' +
-                 str(np.round(average_temp, 2)) + ' +/- ' + str(round(y_err, 2)) + ' K')  
+        plt.errorbar(last_time, average_temp, yerr=y_err, fmt='o', color='black', label='Melting point ' + name + ': ' +
+                     str(np.round(average_temp, 2)) + ' +/- ' + str(round(y_err, 2)) + ' K')
         plt.xlabel('time (ps)')
         plt.ylabel('temperature (K)')
     plt.legend()
@@ -113,7 +125,8 @@ def time_temperature_plot(files: list,extra_tags: list= [""], window_size: int=0
 # time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_combined_relaxed_expanded.traj"])
 # Do the same for pressure:
 
-def time_pressure_plot(files: list, window_size: int=0.7):
+
+def time_pressure_plot(files: list, window_size: int = 0.7):
     """
     Args:   
         list of trajectory files
@@ -121,38 +134,61 @@ def time_pressure_plot(files: list, window_size: int=0.7):
     returns: plot of time vs pressure    
     """
     for file in files:
-        time = get_time(file)/2 # convert from 2 fs timestep to 1 fs timestep
+        time = get_time(file)/2  # convert from 2 fs timestep to 1 fs timestep
         pressure = get_pressure(file)
         name = get_molecule_name(file)
-        plt.plot(time, pressure, colors[files.index(file)], label= name)
+        plt.plot(time, pressure, colors[files.index(file)], label=name)
         # Plot average pressure point with error bars on the plot
         average_pressure = time_averaging(pressure, window_size)
         last_time = time[-1]
         y_err = convergence_error(pressure, window_size)
-        plt.errorbar(last_time, average_pressure, yerr=y_err, fmt='o', color='black', label='Pressure Melting Point '+ name +': ' +
-                 str(np.round(average_pressure, 2)) + ' +/- ' + str(round(y_err, 2)) + ' GPa')  
+        plt.errorbar(last_time, average_pressure, yerr=y_err, fmt='o', color='black', label='Pressure Melting Point ' + name + ': ' +
+                     str(np.round(average_pressure, 2)) + ' +/- ' + str(round(y_err, 2)) + ' GPa')
         plt.xlabel('time (ps)')
         plt.ylabel('pressure (GPa)')
     plt.legend()
     plt.show()
 
 
-# time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiBr_junction_relaxed.traj",
-#                        "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiBr_junction_relaxed_800K.traj",
-#                        "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiBr_junction_relaxed_1000K.traj"],["_2000K","_800K", "_1000K"])
-time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiF_junction_relaxed.traj",
-                       "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiF_junction_relaxed_2250K.traj"],["_2000K","_2250K"])
-
+#
 # time_pressure_plot(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2O_junction_relaxed.traj",
-                    # "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2S_junction_relaxed.traj",
-                    # "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2Se_junction_relaxed.traj"])
+    # "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2S_junction_relaxed.traj",
+    # "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2Se_junction_relaxed.traj"])
 # time_averaged_Etot_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_combined_relaxed_expanded.traj"])
 # time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2O_junction_relaxed.traj",
-                    # "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2S_junction_relaxed.traj",
-                    # "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2Se_junction_relaxed.traj"])
+    # "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2S_junction_relaxed.traj",
+    # "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2Se_junction_relaxed.traj"])
 # time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiF_junction_relaxed.traj"])
 # time_averaged_Etot_plot(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiF_junction_relaxed.traj"])
 # time_pressure_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_Al_cr_desta.traj"])
 # time_total_energy_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_Al_cr_desta.traj"])
 # time_total_energy_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_cr_desta.traj"])
 # time_averaged_Etot_plot(["chgnet/MyCHGNetCode/data_out_2PC/mdNVE_out_LiCl_cr_desta.traj"])
+
+time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2CO3_junction_relaxed.traj",
+                       "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2CO3_junction_relaxed_1000K.traj"], 
+                      ["_2200K", "_1000K"])
+
+time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiCl_junction_relaxed_1600K.traj",
+                       "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiCl_junction_relaxed.traj",
+                       "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiCl_junction_relaxed_2300K.traj",
+                       "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_LiCl_junction_relaxed_2600K.traj"],
+                      ["1600", "_2000K", "_2300K", "_2600K"])
+
+time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2O_junction_relaxed.traj",
+                       "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2O_junction_relaxed_2200K.traj",
+                       "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2O_junction_relaxed_2400K.traj",
+                       "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2O_junction_relaxed_2600K.traj"], 
+                      ["_2000K", "_2200K", "_2400K", "_2600K"])
+
+time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2S_junction_relaxed.traj",
+                       "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2S_junction_relaxed_1600K.traj",
+                       "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2S_junction_relaxed_1400K.traj",
+                       "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2S_junction_relaxed_1000K.traj"],
+                      ["_2000K", "_1600K", "_1400K", "_1000K"])
+
+time_temperature_plot(["chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2Se_junction_relaxed.traj",
+                       "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2Se_junction_relaxed_1900K.traj",
+                       "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2Se_junction_relaxed_1600K.traj",
+                       "chgnet/MyCHGNetCode/data_out_2PC_pymatgenjunction/mdNVE_out_Li2Se_junction_relaxed_1000K.traj"
+                       ],["2200","1900","1600","1000"])
